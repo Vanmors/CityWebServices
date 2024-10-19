@@ -1,0 +1,38 @@
+openapi: 3.0.3
+info:
+  title: Swagger Petstore - OpenAPI 3.0
+  version: 1.0.11
+servers:
+  - url: http://localhost:8080/route
+paths:
+  /calculate/to-oldest:
+    get:
+      summary: Рассчитать длину маршрута до самого старого города
+      operationId: calculateToOldest
+      responses:
+        '200':
+          description: Успешный расчет
+          content:
+            application/xml:
+              schema:
+                xml:
+                  name: length
+                type: number
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /calculate/between-oldest-and-newest:
+    get:
+      summary: Рассчитать длину маршрута между старейшим и самым новым городом
+      operationId: calculateBetweenOldestAndNewest
+      responses:
+        '200':
+          description: Успешный расчет
+          content:
+            application/xml:
+              schema:
+                xml:
+                  name: length
+                type: number
+        '500':
+          description: Внутренняя ошибка сервера

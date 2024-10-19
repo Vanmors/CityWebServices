@@ -175,8 +175,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/City'
-        '400':
-          description: Неверные параметры запроса
+        '500':
+          description: Внутренняя ошибка сервера
 
 components:
   schemas:
