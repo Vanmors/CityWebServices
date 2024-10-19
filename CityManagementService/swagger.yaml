@@ -1,0 +1,236 @@
+openapi: 3.0.0
+info:
+  title: City Management API
+  description: API для управления коллекцией объектов City.
+  version: "1.0.0"
+servers:
+  - url: http://localhost:8080/api
+    description: Локальный сервер
+
+paths:
+  /cities:
+    get:
+      summary: Получить массив объектов City
+      operationId: getCities
+      parameters:
+        - name: sort
+          in: query
+          description: Поле для сортировки (например, name, population)
+          required: false
+          schema:
+            type: string
+        - name: filter
+          in: query
+          description: Фильтрация по любому полю (например, population>1000)
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Номер страницы
+          required: false
+          schema:
+            type: integer
+        - name: size
+          in: query
+          description: Размер страницы
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешное получение списка объектов
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/City'
+        '400':
+          description: Неверные параметры запроса
+        '500':
+          description: Внутренняя ошибка сервера
+
+    post:
+      summary: Добавить новый объект City
+      operationId: addCity
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/City'
+      responses:
+        '201':
+          description: Объект успешно создан
+        '400':
+          description: Неверные данные
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /cities/{id}:
+    get:
+      summary: Получить объект City по его ID
+      operationId: getCityById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Успешное получение объекта
+          content:
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/City'
+        '404':
+          description: Объект не найден
+
+    put:
+      summary: Обновить объект City по ID
+      operationId: updateCity
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/City'
+      responses:
+        '200':
+          description: Объект успешно обновлен
+        '400':
+          description: Неверные данные
+        '404':
+          description: Объект не найден
+
+    delete:
+      summary: Удалить объект City по ID
+      operationId: deleteCity
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Объект успешно удален
+        '404':
+          description: Объект не найден
+
+  /cities/delete-by-sea-level:
+    delete:
+      summary: Удалить все объекты, у которых значение metersAboveSeaLevel равно заданному
+      operationId: deleteBySeaLevel
+      parameters:
+        - name: metersAboveSeaLevel
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Удаление успешно выполнено
+        '400':
+          description: Неверный запрос
+
+  /cities/total-sea-level:
+    get:
+      summary: Рассчитать сумму значений metersAboveSeaLevel для всех объектов
+      operationId: totalSeaLevel
+      responses:
+        '200':
+          description: Успешный расчет
+          content:
+            application/json:
+              schema:
+                type: number
+        '500':
+          description: Внутренняя ошибка сервера
+
+  /cities/find-by-name:
+    get:
+      summary: Найти объекты, имя которых начинается с заданной подстроки
+      operationId: findByName
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Успешное получение данных
+          content:
+            application/xml:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/City'
+        '400':
+          description: Неверные параметры запроса
+
+components:
+  schemas:
+    City:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Уникальный идентификатор города
+        name:
+          type: string
+          description: Название города
+        coordinates:
+          $ref: '#/components/schemas/Coordinates'
+        creationDate:
+          type: string
+          format: date-time
+        area:
+          type: number
+        population:
+          type: integer
+        metersAboveSeaLevel:
+          type: integer
+        capital:
+          type: boolean
+        climate:
+          type: string
+          enum:
+            - MONSOON
+            - HUMIDCONTINENTAL
+            - OCEANIC
+            - POLAR_ICECAP
+        standardOfLiving:
+          type: string
+          enum:
+            - ULTRA_HIGH
+            - VERY_HIGH
+            - LOW
+            - ULTRA_LOW
+            - NIGHTMARE
+        governor:
+          $ref: '#/components/schemas/Human'
+
+    Coordinates:
+      type: object
+      properties:
+        x:
+          type: integer
+        y:
+          type: integer
+
+    Human:
+      type: object
+      properties:
+        birthday:
+          type: string
+          format: date-time
