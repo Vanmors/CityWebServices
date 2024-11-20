@@ -2,7 +2,7 @@ package service
 
 import City
 
-class CityValidator {
+open class CityValidator {
     companion object {
         fun validateCity(city: City): List<String> {
             val errors = mutableListOf<String>()

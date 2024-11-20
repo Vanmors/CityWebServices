@@ -1,9 +1,9 @@
 package service
 
 import City
-import javax.ws.rs.BadRequestException
+import jakarta.ws.rs.BadRequestException
 
-class CityManipulator {
+open class CityManipulator {
     companion object {
 
         fun applyFilter(cityList: List<City>, filter: String): List<City> {

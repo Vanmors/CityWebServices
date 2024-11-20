@@ -1,4 +1,7 @@
+package com.example
 
-fun main() {
-    println("Hello World!")
-}
+import jakarta.ws.rs.ApplicationPath
+import jakarta.ws.rs.core.Application
+
+@ApplicationPath("/api")
+open class JaxRsApplication : Application()

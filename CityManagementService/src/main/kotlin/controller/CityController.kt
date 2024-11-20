@@ -1,14 +1,14 @@
+import jakarta.ws.rs.*
+import jakarta.ws.rs.core.MediaType
+import jakarta.ws.rs.core.Response
 import service.CityManipulator
 import service.CityValidator
-import javax.ws.rs.*
-import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
 import java.time.LocalDate
 
 @Path("/cities")
 @Produces(MediaType.APPLICATION_XML)
 @Consumes(MediaType.APPLICATION_XML)
-class CityResource {
+open class CityResource {
 
     private val cities = mutableListOf<City>()
 
