@@ -1,6 +1,6 @@
-package service
+package com.example.service
 
-import City
+import com.example.entity.City
 import jakarta.ws.rs.BadRequestException
 
 open class CityManipulator {

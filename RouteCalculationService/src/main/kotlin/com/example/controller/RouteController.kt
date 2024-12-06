@@ -1,22 +1,24 @@
-package com.solanteq.solar.edu.group4.controller
+package com.example.controller
 
-import com.solanteq.solar.edu.group4.entity.City
-import com.solanteq.solar.edu.group4.entity.Coordinates
-import javax.ws.rs.*
-import javax.ws.rs.client.ClientBuilder
-import javax.ws.rs.core.MediaType
-import javax.ws.rs.core.Response
+import com.example.entity.City
+import com.example.entity.Coordinates
+import jakarta.ws.rs.GET
+import jakarta.ws.rs.Path
+import jakarta.ws.rs.Produces
+import jakarta.ws.rs.client.ClientBuilder
 import kotlin.math.sqrt
+import jakarta.ws.rs.core.MediaType
+import jakarta.ws.rs.core.Response
 import kotlin.math.pow
 
 @Path("/route/calculate")
 @Produces(MediaType.APPLICATION_XML)
-class RouteController {
+open class RouteController {
     private val citiesApiUrl = "http://localhost:8080/cities"
 
     @GET
     @Path("/between-oldest-and-newest")
-    fun calculateDistanceBetweenOldestAndNewest(): Response {
+    open fun calculateDistanceBetweenOldestAndNewest(): Response {
         try {
             val response = queryToCitiesApi()
             if (response.first != null) {
@@ -45,7 +47,7 @@ class RouteController {
 
     @GET
     @Path("/to-oldest")
-    fun calculateDistanceToOldest(): Response {
+    open fun calculateDistanceToOldest(): Response {
 
         try {
             val response = queryToCitiesApi()

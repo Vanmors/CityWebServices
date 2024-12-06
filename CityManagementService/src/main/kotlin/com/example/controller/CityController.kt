@@ -1,25 +1,33 @@
+package com.example.controller
+
+import com.example.entity.CityListWrapper
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
-import service.CityManipulator
-import service.CityValidator
+import com.example.service.CityManipulator
+import com.example.service.CityValidator
 import java.time.LocalDate
+import com.example.entity.City
+import com.example.entity.SeaLevelSumWrapper
+import java.util.concurrent.CopyOnWriteArrayList
 
 @Path("/cities")
 @Produces(MediaType.APPLICATION_XML)
 @Consumes(MediaType.APPLICATION_XML)
 open class CityResource {
-
-    private val cities = mutableListOf<City>()
-
+    companion object {
+        val cities = CopyOnWriteArrayList<City>()
+    }
     @GET
-    fun getCities(
+    open fun getCities(
         @QueryParam("sort") sort: String?,
         @QueryParam("filter") filter: String?,
         @QueryParam("page") @DefaultValue("1") page: Int?,
-        @QueryParam("size") @DefaultValue("1") size: Int?
+        @QueryParam("size") size: Int?
     ): Response {
         try {
+            val effectiveSize = size ?: cities.size
+
             var result = cities.toList()
 
             if (filter != null) {
@@ -30,13 +38,13 @@ open class CityResource {
                 }
             }
 
-            result = CityManipulator.applyPagination(result, page!!, size!!)
+            result = CityManipulator.applyPagination(result, page!!, effectiveSize)
 
             if (sort != null) {
                 result = CityManipulator.applySort(result, sort)
             }
 
-            return Response.ok(result).build()
+            return Response.ok(CityListWrapper(result)).build()
         } catch (e: Exception) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity("<error>Server error: ${e.message}</error>")
@@ -45,7 +53,7 @@ open class CityResource {
     }
 
     @POST
-    fun addCity(city: City): Response {
+    open fun addCity(city: City): Response {
         try {
             val validationErrors = CityValidator.validateCity(city)
             if (validationErrors.isNotEmpty()) {
@@ -55,7 +63,7 @@ open class CityResource {
             }
 
             city.id = (cities.size + 1).toLong()
-            city.creationDate = LocalDate.now()
+            city.creationDate = LocalDate.now().toString()
             cities.add(city)
             return Response.status(Response.Status.CREATED).entity(city).build()
         } catch (e: Exception) {
@@ -67,7 +75,7 @@ open class CityResource {
 
     @GET
     @Path("/{id}")
-    fun getCity(@PathParam("id") id: Long): Response {
+    open fun getCity(@PathParam("id") id: Long): Response {
         return try {
             val city = cities.find { it.id == id }
             if (city != null) {
@@ -84,7 +92,7 @@ open class CityResource {
 
     @PUT
     @Path("/{id}")
-    fun updateCity(@PathParam("id") id: Long, updatedCity: City): Response {
+    open fun updateCity(@PathParam("id") id: Long, updatedCity: City): Response {
         try {
             val validationErrors = CityValidator.validateCity(updatedCity)
             if (validationErrors.isNotEmpty()) {
@@ -119,7 +127,7 @@ open class CityResource {
 
     @DELETE
     @Path("/{id}")
-    fun deleteCity(@PathParam("id") id: Long): Response {
+    open fun deleteCity(@PathParam("id") id: Long): Response {
         return try {
             val city = cities.find { it.id == id }
             if (city != null) {
@@ -136,8 +144,9 @@ open class CityResource {
     }
 
     @DELETE
-    @Path("/bySeaLevel/{level}")
-    fun deleteBySeaLevel(@PathParam("level") level: Float): Response {
+    //@Path("/bySeaLevel/{level}")
+    @Path("/by-sea-level/{level}")
+    open fun deleteBySeaLevel(@PathParam("level") level: Float): Response {
         return try {
             cities.removeIf { it.metersAboveSeaLevel == level }
             Response.status(Response.Status.NO_CONTENT).build()
@@ -149,11 +158,12 @@ open class CityResource {
     }
 
     @GET
-    @Path("/seaLevelSum")
-    fun getSeaLevelSum(): Response {
+    //@Path("/seaLevelSum")
+    @Path("/sea-level-sum")
+    open fun getSeaLevelSum(): Response {
         return try {
             val sum = cities.sumOf { it.metersAboveSeaLevel.toDouble() }
-            Response.ok(sum).build()
+            Response.ok(SeaLevelSumWrapper(sum)).build()
         } catch (e: Exception) {
             Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity("<error>Server error: ${e.message}</error>")
@@ -162,11 +172,12 @@ open class CityResource {
     }
 
     @GET
-    @Path("/nameStartsWith/{prefix}")
-    fun getByNamePrefix(@PathParam("prefix") prefix: String): Response {
+    //@Path("/nameStartsWith/{prefix}")
+    @Path("/name-starts-with/{prefix}")
+    open fun getByNamePrefix(@PathParam("prefix") prefix: String): Response {
         return try {
             val filteredCities = cities.filter { it.name?.startsWith(prefix) == true }
-            Response.ok(filteredCities).build()
+            Response.ok(CityListWrapper(filteredCities)).build()
         } catch (e: Exception) {
             Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity("<error>Server error: ${e.message}</error>")
