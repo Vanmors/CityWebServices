@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+        }
+        .container input, .container button {
+            margin: 5px;
+        }
+        .city-list {
+            margin-top: 20px;
+            list-style-type: none;
+        }
+        .city-item {
+            margin: 5px 0;
+            padding: 5px;
+            background: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+<h1>City Management</h1>
+
+<div class="container">
+    <h2>Add City</h2>
+    <input id="name" type="text" placeholder="City Name" />
+    <input id="population" type="number" placeholder="Population" />
+    <input id="area" type="number" placeholder="Area" />
+    <input id="metersAboveSeaLevel" type="number" placeholder="Meters Above Sea Level" />
+    <input id="capital" type="checkbox" />
+    <label for="capital">Is Capital</label>
+    <select id="climate">
+        <option value="MONSOON">MONSOON</option>
+        <option value="HUMIDCONTINENTAL">HUMIDCONTINENTAL</option>
+        <option value="OCEANIC">OCEANIC</option>
+        <option value="POLAR_ICECAP">POLAR_ICECAP</option>
+    </select>
+    <select id="standardOfLiving">
+        <option value="ULTRA_HIGH">ULTRA_HIGH</option>
+        <option value="VERY_HIGH">VERY_HIGH</option>
+        <option value="LOW">LOW</option>
+        <option value="ULTRA_LOW">ULTRA_LOW</option>
+        <option value="NIGHTMARE">NIGHTMARE</option>
+    </select>
+    <input id="governorBirthday" type="datetime-local" placeholder="Governor's Birthday" />
+    <input id="coordinatesX" type="number" placeholder="Coordinates X" />
+    <input id="coordinatesY" type="number" placeholder="Coordinates Y" />
+    <button id="addCityButton">Add City</button>
+</div>
+
+<div class="container">
+    <h2>Search Cities</h2>
+    <input id="searchName" type="text" placeholder="City Name" />
+    <button id="searchCityButton">Search by Name</button>
+</div>
+
+<div class="container">
+    <h2>Filter Cities</h2>
+    <input id="filter" type="text" placeholder="Filter (e.g., population>1000)" />
+    <button id="filterCitiesButton">Filter Cities</button>
+</div>
+
+<div class="container">
+    <h2>Sort Cities</h2>
+    <input id="sort" type="text" placeholder="Sort by (e.g., name, population)" />
+    <button id="sortCitiesButton">Sort Cities</button>
+</div>
+
+<div class="container">
+    <h2>Delete City by ID</h2>
+    <input id="deleteCityId" type="number" placeholder="City ID" />
+    <button id="deleteCityButton">Delete City</button>
+</div>
+
+<ul id="cityList" class="city-list"></ul>
+
+<script>
+    const apiUrl = 'http://localhost:8080/city-management-1.0-SNAPSHOT/api/cities'; // Replace with actual API URL
+
+    // Add City
+    document.getElementById('addCityButton').addEventListener('click', () => {
+        const name = document.getElementById('name').value;
+        const population = parseInt(document.getElementById('population').value);
+        const area = parseFloat(document.getElementById('area').value);
+        const metersAboveSeaLevel = parseInt(document.getElementById('metersAboveSeaLevel').value);
+        const capital = document.getElementById('capital').checked;
+        const climate = document.getElementById('climate').value;
+        const standardOfLiving = document.getElementById('standardOfLiving').value;
+        const governorBirthday = document.getElementById('governorBirthday').value;
+        const coordinatesX = parseInt(document.getElementById('coordinatesX').value);
+        const coordinatesY = parseInt(document.getElementById('coordinatesY').value);
+
+        const cityXml = `
+        <City>
+          <name>${name}</name>
+          <population>${population}</population>
+          <area>${area}</area>
+          <metersAboveSeaLevel>${metersAboveSeaLevel}</metersAboveSeaLevel>
+          <capital>${capital}</capital>
+          <climate>${climate}</climate>
+          <standardOfLiving>${standardOfLiving}</standardOfLiving>
+          <creationDate>${new Date().toISOString()}</creationDate>
+          <coordinates>
+            <x>${coordinatesX}</x>
+            <y>${coordinatesY}</y>
+          </coordinates>
+          <governor>
+            <birthday>${governorBirthday}</birthday>
+          </governor>
+        </City>
+      `;
+
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/xml',
+            },
+            body: cityXml,
+            mode: 'no-cors',
+        })
+            .then(response => response.ok ? alert('City added successfully!') : alert('Failed to add city'))
+            .catch(error => console.error('Error adding city:', error));
+    });
+
+    // Search City by Name
+    document.getElementById('searchCityButton').addEventListener('click', () => {
+        const name = document.getElementById('searchName').value;
+
+        fetch(`${apiUrl}/find-by-name?name=${name}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/xml',
+            },
+            mode: 'no-cors',
+        })
+            .then(response => response.text())
+            .then(xml => displayCities(xml))
+            .catch(error => console.error('Error fetching city:', error));
+    });
+
+    // Filter Cities
+    document.getElementById('filterCitiesButton').addEventListener('click', () => {
+        const filter = document.getElementById('filter').value;
+
+        fetch(`${apiUrl}?filter=${filter}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/xml',
+            },
+            mode: 'no-cors',
+        })
+            .then(response => response.text())
+            .then(xml => displayCities(xml))
+            .catch(error => console.error('Error filtering cities:', error));
+    });
+
+    // Sort Cities
+    document.getElementById('sortCitiesButton').addEventListener('click', () => {
+        const sort = document.getElementById('sort').value;
+
+        fetch(`${apiUrl}?sort=${sort}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/xml',
+            },
+            mode: 'no-cors',
+        })
+            .then(response => response.text())
+            .then(xml => displayCities(xml))
+            .catch(error => console.error('Error sorting cities:', error));
+    });
+
+    // Delete City
+    document.getElementById('deleteCityButton').addEventListener('click', () => {
+        const cityId = parseInt(document.getElementById('deleteCityId').value);
+
+        fetch(`${apiUrl}/${cityId}`, {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/xml',
+            },
+            mode: 'no-cors',
+        })
+            .then(response => response.ok ? alert('City deleted successfully!') : alert('Failed to delete city'))
+            .catch(error => console.error('Error deleting city:', error));
+    });
+
+    // Display Cities
+    function displayCities(xml) {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xml, 'application/xml');
+        const cities = xmlDoc.getElementsByTagName('City');
+
+        const cityList = document.getElementById('cityList');
+        cityList.innerHTML = ''; // Clear previous list
+
+        Array.from(cities).forEach(city => {
+            const cityItem = document.createElement('li');
+            cityItem.classList.add('city-item');
+            cityItem.textContent = `
+          City Name: ${city.getElementsByTagName('name')[0].textContent},
+          Population: ${city.getElementsByTagName('population')[0].textContent},
+          Capital: ${city.getElementsByTagName('capital')[0].textContent}
+        `;
+            cityList.appendChild(cityItem);
+        });
+    }
+</script>
+</body>
+</html>
