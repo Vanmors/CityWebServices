@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Management</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+    <h1>City Management</h1>
+</header>
+<main>
+    <section id="city-list">
+        <h2>Список городов</h2>
+        <button onclick="fetchCities()">Обновить список</button>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Население</th>
+                <th>Действия</th>
+            </tr>
+            </thead>
+            <tbody id="cities-table-body"></tbody>
+        </table>
+    </section>
+    <section id="city-form">
+        <h2>Добавить/Обновить город</h2>
+        <form onsubmit="submitCity(event)">
+            <label>
+                ID (для обновления):
+                <input type="number" id="city-id" />
+            </label>
+            <label>
+                Название:
+                <input type="text" id="city-name" required />
+            </label>
+            <label>
+                Население:
+                <input type="number" id="city-population" required />
+            </label>
+            <button type="submit">Сохранить</button>
+        </form>
+    </section>
+</main>
+<script src="script.js"></script>
+</body>
+</html>
