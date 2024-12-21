@@ -1,6 +1,7 @@
 package com.example.controller
 
 import com.example.entity.City
+import com.example.entity.CityListWrapper
 import com.example.entity.Coordinates
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
@@ -9,12 +10,15 @@ import jakarta.ws.rs.client.ClientBuilder
 import kotlin.math.sqrt
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.math.pow
 
 @Path("/route/calculate")
 @Produces(MediaType.APPLICATION_XML)
 open class RouteController {
-    private val citiesApiUrl = "http://localhost:8080/cities"
+    private val citiesApiUrl = "http://localhost:8081/city-management-1.0-SNAPSHOT/api/cities"
 
     @GET
     @Path("/between-oldest-and-newest")
@@ -26,8 +30,11 @@ open class RouteController {
             }
             val cities = response.second!!
 
-            val oldestCity = cities.filter { it.creationDate != null }.minByOrNull { it.creationDate!! }
-            val newestCity = cities.filter { it.creationDate != null }.maxByOrNull { it.creationDate!! }
+            val (oldestCity, newestCity)  = findOldestAndNewestCities(cities)
+
+
+            //val oldestCity = cities.filter { it.creationDate != null }.minByOrNull { it.creationDate!! }
+            //val newestCity = cities.filter { it.creationDate != null }.maxByOrNull { it.creationDate!! }
 
             if (oldestCity == null || newestCity == null || oldestCity.coordinates == null || newestCity.coordinates == null) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -56,7 +63,8 @@ open class RouteController {
             }
             val cities = response.second!!
 
-            val oldestCity = cities.filter { it.creationDate != null }.minByOrNull { it.creationDate!! }
+            //val oldestCity = cities.filter { it.creationDate != null }.minByOrNull { it.creationDate!! }
+            val (oldestCity, _) = findOldestAndNewestCities(cities)
 
             if (oldestCity?.coordinates == null) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -88,22 +96,51 @@ open class RouteController {
             )
         }
 
-        val cities = citiesResponse.readEntity(Array<City>::class.java).toList()
+        val cities = citiesResponse.readEntity(CityListWrapper::class.java)
 
-        if (cities.isEmpty()) {
+        if (cities.cities.isEmpty()) {
             return Pair(
                 Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("<error>No cities found</error>")
                     .build(), null
             )
         }
         client.close()
-        return Pair(null, cities)
+        val mutableCities = cities.cities.toMutableList()
+        return Pair(null, mutableCities)
     }
 
     private fun calculateDistanceByCoordinates(coord1: Coordinates, coord2: Coordinates): Double {
         val deltaX = coord1.x!! - coord2.x!!
         val deltaY = (coord1.y!! - coord2.y!!).toDouble()
         return sqrt(deltaX.pow(2) + deltaY.pow(2))
+    }
+
+    fun findOldestAndNewestCities(cities: List<City>): Pair<City?, City?> {
+        // Форматтеры для разбора дат с и без времени
+        val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
+        // Преобразуем строки в LocalDateTime
+        fun parseCreationDate(dateStr: String?): LocalDateTime? {
+            return try {
+                if (dateStr == null) null
+                else if (dateStr.contains(" ")) LocalDateTime.parse(dateStr, dateTimeFormatter)
+                else LocalDate.parse(dateStr, dateFormatter).atStartOfDay()
+            } catch (e: Exception) {
+                null // Если формат неверный, вернем null
+            }
+        }
+
+        // Найти города с минимальной и максимальной датой
+        val oldestCity = cities
+            .filter { parseCreationDate(it.creationDate) != null } // Оставляем только города с валидными датами
+            .minByOrNull { parseCreationDate(it.creationDate)!! }
+
+        val newestCity = cities
+            .filter { parseCreationDate(it.creationDate) != null }
+            .maxByOrNull { parseCreationDate(it.creationDate)!! }
+
+        return Pair(oldestCity, newestCity)
     }
 
 }
