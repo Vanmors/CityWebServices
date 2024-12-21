@@ -1,45 +1,50 @@
 const apiUrl = "http://localhost:8080/route";
 
-// Рассчитать длину маршрута до самого старого города
-function calculateToOldest() {
-  fetch(`${apiUrl}/calculate/to-oldest`)
+// Общая функция для выполнения запроса и обработки XML
+function fetchAndProcessXml(url, resultElementId, successMessage, errorMessage) {
+  fetch(url)
     .then((response) => {
       if (!response.ok) {
-        throw new Error("Ошибка расчета маршрута до самого старого города");
+        throw new Error(errorMessage);
       }
       return response.text();
     })
     .then((xml) => {
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(xml, "application/xml");
-      const length = xmlDoc.getElementsByTagName("length")[0].textContent;
+      const distanceElement = xmlDoc.getElementsByTagName("distance")[0];
 
-      document.getElementById("result-to-oldest").textContent = `Длина маршрута: ${length}`;
+      if (!distanceElement) {
+        throw new Error("Неверный формат XML: отсутствует тег <distance>");
+      }
+
+      const distance = distanceElement.textContent;
+      document.getElementById(resultElementId).textContent = `Длина маршрута: ${distance}`;
+      alert(successMessage);
     })
     .catch((error) => {
       console.error(error);
-      document.getElementById("result-to-oldest").textContent = "Ошибка при расчете маршрута.";
+      document.getElementById(resultElementId).textContent = "Ошибка при расчете маршрута.";
+      alert(error.message);
     });
+}
+
+// Рассчитать длину маршрута до самого старого города
+function calculateToOldest() {
+  fetchAndProcessXml(
+    `${apiUrl}/calculate/to-oldest`,
+    "result-to-oldest",
+    "Расчет маршрута до самого старого города выполнен успешно!",
+    "Ошибка расчета маршрута до самого старого города"
+  );
 }
 
 // Рассчитать длину маршрута между старейшим и самым новым городом
 function calculateBetweenOldestAndNewest() {
-  fetch(`${apiUrl}/calculate/between-oldest-and-newest`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Ошибка расчета маршрута между старейшим и самым новым городом");
-      }
-      return response.text();
-    })
-    .then((xml) => {
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(xml, "application/xml");
-      const length = xmlDoc.getElementsByTagName("length")[0].textContent;
-
-      document.getElementById("result-between-oldest-newest").textContent = `Длина маршрута: ${length}`;
-    })
-    .catch((error) => {
-      console.error(error);
-      document.getElementById("result-between-oldest-newest").textContent = "Ошибка при расчете маршрута.";
-    });
+  fetchAndProcessXml(
+    `${apiUrl}/calculate/between-oldest-and-newest`,
+    "result-between-oldest-newest",
+    "Расчет маршрута между старейшим и самым новым городом выполнен успешно!",
+    "Ошибка расчета маршрута между старейшим и самым новым городом"
+  );
 }
