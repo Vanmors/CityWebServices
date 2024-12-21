@@ -248,8 +248,20 @@
     </tbody>
 </table>
 
+
+<section id="route-to-oldest">
+    <h2>Рассчитать маршрут до самого старого города</h2>
+    <button onclick="calculateToOldest()">Рассчитать</button>
+    <p id="result-to-oldest"></p>
+</section>
+<section id="route-between-oldest-newest">
+    <h2>Рассчитать маршрут между старейшим и самым новым городом</h2>
+    <button onclick="calculateBetweenOldestAndNewest()">Рассчитать</button>
+    <p id="result-between-oldest-newest"></p>
+</section>
+
 <script>
-    const apiUrl = 'http://localhost:8080/city-management-1.0-SNAPSHOT/api/cities';
+    const apiUrlCities = 'https://localhost:8181/city-management-1.0-SNAPSHOT/api/cities';
 
     // Обработчик для GET-запроса (получение городов)
     document.getElementById('fetch-button').addEventListener('click', async () => {
@@ -366,7 +378,7 @@
         </City>
       `;
 
-        fetch(apiUrl, {
+        fetch(apiUrlCities, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/xml',
@@ -412,7 +424,7 @@
                 </City>
             `;
 
-        fetch(`${apiUrl}/${id}`, {
+        fetch(`${apiUrlCities}/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/xml',
@@ -441,7 +453,7 @@
             return;
         }
 
-        fetch(`${apiUrl}/${id}`, {
+        fetch(`${apiUrlCities}/${id}`, {
             method: 'DELETE',
             headers: {
                 'Accept': 'application/xml',
@@ -462,7 +474,7 @@
 
     // Получение суммы уровня моря
     document.getElementById('sea-level-sum-button').addEventListener('click', () => {
-        fetch(`${apiUrl}/sea-level-sum`, {
+        fetch(`${apiUrlCities}/sea-level-sum`, {
             method: 'GET',
             headers: {
                 'Accept': 'application/xml',
@@ -491,7 +503,7 @@
             return;
         }
 
-        fetch(`${apiUrl}/by-sea-level/${seaLevel}`, {
+        fetch(`${apiUrlCities}/by-sea-level/${seaLevel}`, {
             method: 'DELETE',
             headers: {
                 'Accept': 'application/xml',
@@ -514,7 +526,7 @@
             return;
         }
 
-        fetch(`${apiUrl}/name-starts-with/${prefixCityName}`, {
+        fetch(`${apiUrlCities}/name-starts-with/${prefixCityName}`, {
             method: 'GET',
             headers: {
                 'Accept': 'application/xml',
@@ -553,6 +565,57 @@
             })
             .catch(error => alert(`Error fetching cities: ${error.message}`));
     });
+
+
+    function fetchAndProcessXml(url, resultElementId, successMessage, errorMessage) {
+        fetch(url)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(errorMessage);
+                }
+                return response.text();
+            })
+            .then((xml) => {
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xml, "application/xml");
+                const distanceElement = xmlDoc.getElementsByTagName("distance")[0];
+
+                if (!distanceElement) {
+                    throw new Error("Неверный формат XML: отсутствует тег <distance>");
+                }
+
+                const distance = distanceElement.textContent;
+                document.getElementById(resultElementId).textContent = `Длина маршрута: ${distance}`;
+                alert(successMessage);
+            })
+            .catch((error) => {
+                console.error(error);
+                document.getElementById(resultElementId).textContent = "Ошибка при расчете маршрута.";
+                alert(error.message);
+            });
+    }
+
+    const apiUrlRoutes = "https://localhost:8182/route-calculation-1.0-SNAPSHOT/api/route/calculate"
+
+    // Рассчитать длину маршрута до самого старого города
+    function calculateToOldest() {
+        fetchAndProcessXml(
+            `${apiUrlRoutes}/to-oldest`,
+            "result-to-oldest",
+            "Расчет маршрута до самого старого города выполнен успешно!",
+            "Ошибка расчета маршрута до самого старого города"
+        );
+    }
+
+    // Рассчитать длину маршрута между старейшим и самым новым городом
+    function calculateBetweenOldestAndNewest() {
+        fetchAndProcessXml(
+            `${apiUrlRoutes}/between-oldest-and-newest`,
+            "result-between-oldest-newest",
+            "Расчет маршрута между старейшим и самым новым городом выполнен успешно!",
+            "Ошибка расчета маршрута между старейшим и самым новым городом"
+        );
+    }
 </script>
 </body>
 </html>
