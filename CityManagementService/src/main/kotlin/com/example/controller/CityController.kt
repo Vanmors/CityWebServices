@@ -162,7 +162,10 @@ open class CityResource {
     @Path("/sea-level-sum")
     open fun getSeaLevelSum(): Response {
         return try {
-            val sum = cities.sumOf { it.metersAboveSeaLevel.toDouble() }
+            var sum = 0.0
+            for (city in cities) {
+                sum += city.metersAboveSeaLevel.toDouble()
+            }
             Response.ok(SeaLevelSumWrapper(sum)).build()
         } catch (e: Exception) {
             Response.status(Response.Status.INTERNAL_SERVER_ERROR)

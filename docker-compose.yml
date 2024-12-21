@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  payara:
+    build: ./CityManagementService
+    container_name: CityManagementService
+    ports:
+      - "8080:8080" # Перенаправление HTTP
+      - "8181:8181" # Перенаправление HTTPS
+      - "4848:4848" # Административная консоль
+#    volumes:
+#      - "/home/zagorodnikov/IdeaProjects/CityWebServices/CityManagementService/target/payaradocker:/opt/payara/deployments"

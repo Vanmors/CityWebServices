@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+<h1>City Management</h1>
+<!-- Форма для POST-запроса создания города -->
+<form id="create-city-form">
+    <h2>Create City</h2>
+    <label>
+        Name:
+        <input type="text" id="city-name" placeholder="City name">
+    </label>
+    <label>
+        Population:
+        <input type="number" id="city-population" placeholder="Population">
+    </label>
+    <label>
+        Area:
+        <input type="number" id="city-area" placeholder="Area">
+    </label>
+    <label>
+        Meters Above Sea Level:
+        <input type="number" id="city-metersAboveSeaLevel" placeholder="Meters Above Sea Level">
+    </label>
+    <label>
+        Capital:
+        <input type="checkbox" id="city-capital">
+    </label>
+    <label>
+        Climate:
+        <select id="city-climate">
+            <option value="MONSOON">MONSOON</option>
+            <option value="HUMIDCONTINENTAL">HUMIDCONTINENTAL</option>
+            <option value="OCEANIC">OCEANIC</option>
+            <option value="POLAR_ICECAP">POLAR_ICECAP</option>
+        </select>
+    </label>
+    <label>
+        Standard of Living:
+        <select id="city-standardOfLiving">
+            <option value="ULTRA_HIGH">ULTRA_HIGH</option>
+            <option value="VERY_HIGH">VERY_HIGH</option>
+            <option value="LOW">LOW</option>
+            <option value="ULTRA_LOW">ULTRA_LOW</option>
+            <option value="NIGHTMARE">NIGHTMARE</option>
+        </select>
+    </label>
+    <label>
+        Governor Birthday:
+        <input id="city-governorBirthday" type="datetime-local" placeholder="Governor's Birthday" />
+    </label>
+    <label>
+        Coordinate X:
+        <input id="city-coordinatesX" type="number" placeholder="Coordinates X" />
+    </label>
+    <label>
+        Coordinate Y:
+        <input id="city-coordinatesY" type="number" placeholder="Coordinates Y" />
+    </label>
+    <button type="button" id="create-button">Create City</button>
+</form>
+
+
+<form id="query-form">
+    <h2>Fetch Cities</h2>
+    <label>
+        Sort by:
+        <input type="text" id="sort" placeholder="e.g., population">
+    </label>
+    <label>
+        Page:
+        <input type="number" id="page" placeholder="e.g., 1" min="1">
+    </label>
+    <label>
+        Page size:
+        <input type="number" id="size" placeholder="e.g., 3" min="1">
+    </label>
+    <label>
+        Filter:
+        <input type="text" id="filter" placeholder="e.g., population>1000">
+    </label>
+    <button type="button" id="fetch-button">Fetch Cities</button>
+</form>
+<table id="city-table">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Population</th>
+        <th>Area</th>
+        <th>Meters Above Sea Level</th>
+        <th>Capital</th>
+        <th>Climate</th>
+        <th>Standard of Living</th>
+        <th>Creation Date</th>
+        <th>Coordinates</th>
+        <th>Governor Birthday</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+
+<!-- Форма для PUT-запроса (обновление города) -->
+<form id="update-city-form">
+    <h2>Update City</h2>
+    <label>
+        City ID:
+        <input type="number" id="update-city-id" placeholder="City ID">
+    </label>
+    <label>
+        Name:
+        <input type="text" id="update-city-name" placeholder="City name">
+    </label>
+    <label>
+        Population:
+        <input type="number" id="update-city-population" placeholder="Population">
+    </label>
+    <label>
+        Area:
+        <input type="number" id="update-city-area" placeholder="Area">
+    </label>
+    <label>
+        Meters Above Sea Level:
+        <input type="number" id="update-city-metersAboveSeaLevel" placeholder="Meters Above Sea Level">
+    </label>
+    <label>
+        Capital:
+        <input type="checkbox" id="update-city-capital">
+    </label>
+    <label>
+        Climate:
+        <select id="update-city-climate">
+            <option value="MONSOON">MONSOON</option>
+            <option value="HUMIDCONTINENTAL">HUMIDCONTINENTAL</option>
+            <option value="OCEANIC">OCEANIC</option>
+            <option value="POLAR_ICECAP">POLAR_ICECAP</option>
+        </select>
+    </label>
+    <label>
+        Standard of Living:
+        <select id="update-city-standardOfLiving">
+            <option value="ULTRA_HIGH">ULTRA_HIGH</option>
+            <option value="VERY_HIGH">VERY_HIGH</option>
+            <option value="LOW">LOW</option>
+            <option value="ULTRA_LOW">ULTRA_LOW</option>
+            <option value="NIGHTMARE">NIGHTMARE</option>
+        </select>
+    </label>
+    <label>
+        Governor Birthday:
+        <input id="update-city-governorBirthday" type="datetime-local" placeholder="Governor's Birthday" />
+    </label>
+    <label>
+        Coordinate X:
+        <input id="update-city-coordinatesX" type="number" placeholder="Coordinates X" />
+    </label>
+    <label>
+        Coordinate Y:
+        <input id="update-city-coordinatesY" type="number" placeholder="Coordinates Y" />
+    </label>
+    <button type="button" id="update-button">Update City</button>
+</form>
+
+<!-- Форма для DELETE-запроса (удаление города) -->
+<form id="delete-city-form">
+    <h2>Delete City</h2>
+    <label>
+        City ID:
+        <input type="number" id="delete-city-id" placeholder="City ID">
+    </label>
+    <button type="button" id="delete-button">Delete City</button>
+</form>
+
+<script>
+    const apiUrl = 'http://localhost:8080/city-management-1.0-SNAPSHOT/api/cities';
+
+    // Обработчик для GET-запроса (получение городов)
+    document.getElementById('fetch-button').addEventListener('click', async () => {
+        // Get user inputs
+        const sort = document.getElementById('sort').value;
+        const page = document.getElementById('page').value;
+        const size = document.getElementById('size').value;
+        const filter = document.getElementById('filter').value;
+
+        // Build the query string
+        const params = new URLSearchParams();
+        if (sort) params.append('sort', sort);
+        if (page) params.append('page', page);
+        if (size) params.append('size', size);
+        if (filter) params.append('filter', filter);
+
+        const url = `http://localhost:8080/city-management-1.0-SNAPSHOT/api/cities${params.toString() ? '?' + params.toString() : ''}`;
+
+        try {
+            // Fetch data
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/xml',
+                    'Accept': 'application/xml',
+                }
+            });
+
+            if (response.status === 200 || response.status === 201) {
+                alert(`Success! Status code: ${response.status}`);
+            } else {
+                throw new Error(`Unexpected response status: ${response.status}`);
+            }
+
+            // Parse XML response
+            const text = await response.text();
+            const parser = new DOMParser();
+            const xml = parser.parseFromString(text, "application/xml");
+            const cities = Array.from(xml.getElementsByTagName('city'));
+
+            // Clear the table
+            const tbody = document.getElementById('city-table').querySelector('tbody');
+            tbody.innerHTML = '';
+
+            // Populate the table with data
+            cities.forEach(city => {
+                const row = document.createElement('tr');
+
+                const id = city.getElementsByTagName('id')[0]?.textContent || '';
+                const name = city.getElementsByTagName('name')[0]?.textContent || '';
+                const population = city.getElementsByTagName('population')[0]?.textContent || '';
+                const area = city.getElementsByTagName('area')[0]?.textContent || '';
+                const metersAboveSeaLevel = city.getElementsByTagName('metersAboveSeaLevel')[0]?.textContent || '';
+                const capital = city.getElementsByTagName('capital')[0]?.textContent || '';
+                const climate = city.getElementsByTagName('climate')[0]?.textContent || '';
+                const standardOfLiving = city.getElementsByTagName('standardOfLiving')[0]?.textContent || '';
+                const creationDate = city.getElementsByTagName('creationDate')[0]?.textContent || '';
+                const coordinatesX = city.getElementsByTagName('coordinates')[0]?.getElementsByTagName('x')[0]?.textContent || '';
+                const coordinatesY = city.getElementsByTagName('coordinates')[0]?.getElementsByTagName('y')[0]?.textContent || '';
+                const governorBirthday = city.getElementsByTagName('governor')[0]?.getElementsByTagName('birthday')[0]?.textContent || '';
+
+                row.innerHTML = `
+                        <td>${id}</td>
+                        <td>${name}</td>
+                        <td>${population}</td>
+                        <td>${area}</td>
+                        <td>${metersAboveSeaLevel}</td>
+                        <td>${capital}</td>
+                        <td>${climate}</td>
+                        <td>${standardOfLiving}</td>
+                        <td>${creationDate}</td>
+                        <td>X: ${coordinatesX}, Y: ${coordinatesY}</td>
+                        <td>${governorBirthday}</td>
+                    `;
+
+                tbody.appendChild(row);
+            });
+        } catch (error) {
+            console.error(error);
+            alert(`Failed to fetch cities. Error: ${error.message}`);
+        }
+    });
+
+    // Обработчик для POST-запроса (создание города)
+    document.getElementById('create-button').addEventListener('click', () => {
+        const name = document.getElementById('city-name').value;
+        const population = parseInt(document.getElementById('city-population').value);
+        const area = parseFloat(document.getElementById('city-area').value);
+        const metersAboveSeaLevel = parseInt(document.getElementById('city-metersAboveSeaLevel').value);
+        const capital = document.getElementById('city-capital').checked;
+        const climate = document.getElementById('city-climate').value;
+        const standardOfLiving = document.getElementById('city-standardOfLiving').value;
+        const governorBirthday = document.getElementById('city-governorBirthday').value;
+        const coordinatesX = parseInt(document.getElementById('city-coordinatesX').value);
+        const coordinatesY = parseInt(document.getElementById('city-coordinatesY').value);
+
+        const cityXml = `
+        <City>
+          <name>${name}</name>
+          <population>${population}</population>
+          <area>${area}</area>
+          <metersAboveSeaLevel>${metersAboveSeaLevel}</metersAboveSeaLevel>
+          <capital>${capital}</capital>
+          <climate>${climate}</climate>
+          <standardOfLiving>${standardOfLiving}</standardOfLiving>
+          <creationDate>${new Date().toISOString()}</creationDate>
+          <coordinates>
+            <x>${coordinatesX}</x>
+            <y>${coordinatesY}</y>
+          </coordinates>
+          <governor>
+            <birthday>${governorBirthday}</birthday>
+          </governor>
+        </City>
+      `;
+
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/xml',
+                'Accept': 'application/xml',
+            },
+            body: cityXml,
+        })
+            .then(response => response.ok ? alert('City added successfully!') : alert('Failed to add city'))
+            .catch(error => console.error('Error adding city:', error));
+    });
+
+    // Обработчик для PUT-запроса (обновление города)
+    document.getElementById('update-button').addEventListener('click', () => {
+        const id = document.getElementById('update-city-id').value;
+        const name = document.getElementById('update-city-name').value;
+        const population = parseInt(document.getElementById('update-city-population').value);
+        const area = parseFloat(document.getElementById('update-city-area').value);
+        const metersAboveSeaLevel = parseInt(document.getElementById('update-city-metersAboveSeaLevel').value);
+        const capital = document.getElementById('update-city-capital').checked;
+        const climate = document.getElementById('update-city-climate').value;
+        const standardOfLiving = document.getElementById('update-city-standardOfLiving').value;
+        const governorBirthday = document.getElementById('update-city-governorBirthday').value;
+        const coordinatesX = parseInt(document.getElementById('update-city-coordinatesX').value);
+        const coordinatesY = parseInt(document.getElementById('update-city-coordinatesY').value);
+
+        const cityXml = `
+                <City>
+                    <name>${name}</name>
+                    <population>${population}</population>
+                    <area>${area}</area>
+                    <metersAboveSeaLevel>${metersAboveSeaLevel}</metersAboveSeaLevel>
+                    <capital>${capital}</capital>
+                    <climate>${climate}</climate>
+                    <standardOfLiving>${standardOfLiving}</standardOfLiving>
+                    <creationDate>${new Date().toISOString()}</creationDate>
+                    <coordinates>
+                        <x>${coordinatesX}</x>
+                        <y>${coordinatesY}</y>
+                    </coordinates>
+                    <governor>
+                        <birthday>${governorBirthday}</birthday>
+                    </governor>
+                </City>
+            `;
+
+        fetch(`${apiUrl}/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/xml',
+                'Accept': 'application/xml',
+            },
+            body: cityXml,
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('City updated successfully!');
+                } else {
+                    return response.text().then(text => {
+                        throw new Error(text);
+                    });
+                }
+            })
+            .catch(error => alert(`Error updating city: ${error.message}`));
+    });
+
+    // Обработчик для DELETE-запроса (удаление города)
+    document.getElementById('delete-button').addEventListener('click', () => {
+        const id = document.getElementById('delete-city-id').value;
+
+        if (!id) {
+            alert('Please provide a city ID.');
+            return;
+        }
+
+        fetch(`${apiUrl}/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/xml',
+            },
+        })
+            .then(response => {
+                if (response.ok) {
+                    alert('City deleted successfully!');
+                } else {
+                    return response.text().then(text => {
+                        throw new Error(text);
+                    });
+                }
+            })
+            .catch(error => alert(`Error deleting city: ${error.message}`));
+    });
+
+</script>
+</body>
+</html>

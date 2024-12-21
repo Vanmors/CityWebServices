@@ -1,7 +1,6 @@
 <jboss-deployment-structure>
     <deployment>
         <exclusions>
-            <module name="javax.xml.bind.api" />
             <module name="org.glassfish.jaxb" />
         </exclusions>
     </deployment>
