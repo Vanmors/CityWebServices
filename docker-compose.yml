@@ -3,7 +3,7 @@ version: '3.8'
 services:
   city-management-service:
     build: ./CityManagementService
-    container_name: city-management-service
+    container_name: city_management_service
     ports:
       - "8080:8080" # Перенаправление HTTP
       - "8181:8181" # Перенаправление HTTPS
@@ -13,7 +13,7 @@ services:
 
   route-calculation-service:
     build: ./RouteCalculationService
-    container_name: route-calculation-service
+    container_name: route_calculation_service
     ports:
       - "8081:8080" # Перенаправление HTTP
       - "8182:8181" # Перенаправление HTTPS

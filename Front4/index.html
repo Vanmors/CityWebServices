@@ -568,7 +568,13 @@
 
 
     function fetchAndProcessXml(url, resultElementId, successMessage, errorMessage) {
-        fetch(url)
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/xml',
+                'Accept': 'application/xml',
+            },
+        })
             .then((response) => {
                 if (!response.ok) {
                     throw new Error(errorMessage);
@@ -596,7 +602,6 @@
     }
 
     const apiUrlRoutes = "https://localhost:8182/route-calculation-1.0-SNAPSHOT/api/route/calculate"
-
     // Рассчитать длину маршрута до самого старого города
     function calculateToOldest() {
         fetchAndProcessXml(

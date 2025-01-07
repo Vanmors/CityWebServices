@@ -18,8 +18,7 @@ import kotlin.math.pow
 @Path("/route/calculate")
 @Produces(MediaType.APPLICATION_XML)
 open class RouteController {
-    private val citiesApiUrl = "https://localhost:8181/city-management-1.0-SNAPSHOT/api/cities"
-
+    private val citiesApiUrl = "https://city-management-service:8181/city-management-1.0-SNAPSHOT/api/cities"
     @GET
     @Path("/between-oldest-and-newest")
     open fun calculateDistanceBetweenOldestAndNewest(): Response {
@@ -91,8 +90,9 @@ open class RouteController {
 
         if (citiesResponse.status != 200) {
             return Pair(
-                Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                    .entity("<error>Failed to fetch cities</error>").build(), null
+                Response.status(citiesResponse.status)
+                    .entity(citiesResponse).build(), null
+                    //.entity("<error>Failed to fetch cities</error>").build(), null
             )
         }
 
