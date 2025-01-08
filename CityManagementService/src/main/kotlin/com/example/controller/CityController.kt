@@ -1,23 +1,30 @@
 package com.example.controller
 
+import com.example.com.example.service.CityManipulatorRemote
+import com.example.com.example.service.CityValidatorRemote
 import com.example.entity.CityListWrapper
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
-import com.example.service.CityManipulator
-import com.example.service.CityValidator
+import com.example.com.example.service.impl.CityValidator
 import java.time.LocalDate
 import com.example.entity.City
 import com.example.entity.SeaLevelSumWrapper
+import jakarta.inject.Inject
 import java.util.concurrent.CopyOnWriteArrayList
 
 @Path("/cities")
 @Produces(MediaType.APPLICATION_XML)
 @Consumes(MediaType.APPLICATION_XML)
-open class CityResource {
+open class CityResource @Inject constructor(
+    private val cityManipulatorRemote: CityManipulatorRemote,
+    private val cityValidatorRemote: CityValidatorRemote
+) {
+
     companion object {
         val cities = CopyOnWriteArrayList<City>()
     }
+
     @GET
     open fun getCities(
         @QueryParam("sort") sort: String?,
@@ -32,16 +39,16 @@ open class CityResource {
 
             if (filter != null) {
                 try {
-                    result = CityManipulator.applyFilter(result, filter)
+                    result = cityManipulatorRemote.applyFilter(result, filter)
                 } catch (e: BadRequestException) {
                     return Response.status(Response.Status.BAD_REQUEST).build()
                 }
             }
 
-            result = CityManipulator.applyPagination(result, page!!, effectiveSize)
+            result = cityManipulatorRemote.applyPagination(result, page!!, effectiveSize)
 
             if (sort != null) {
-                result = CityManipulator.applySort(result, sort)
+                result = cityManipulatorRemote.applySort(result, sort)
             }
 
             return Response.ok(CityListWrapper(result)).build()
@@ -55,7 +62,7 @@ open class CityResource {
     @POST
     open fun addCity(city: City): Response {
         try {
-            val validationErrors = CityValidator.validateCity(city)
+            val validationErrors = cityValidatorRemote.validateCity(city)
             if (validationErrors.isNotEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST)
                     .entity("<error>${validationErrors.joinToString(", ")}</error>")
@@ -94,7 +101,7 @@ open class CityResource {
     @Path("/{id}")
     open fun updateCity(@PathParam("id") id: Long, updatedCity: City): Response {
         try {
-            val validationErrors = CityValidator.validateCity(updatedCity)
+            val validationErrors = cityValidatorRemote.validateCity(updatedCity)
             if (validationErrors.isNotEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST)
                     .entity("<error>${validationErrors.joinToString(", ")}</error>")
