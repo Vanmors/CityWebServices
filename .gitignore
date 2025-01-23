@@ -6,3 +6,5 @@ target/
 ### IntelliJ IDEA ###
 
 .idea
+.smarttomcat
+.DS_Store
