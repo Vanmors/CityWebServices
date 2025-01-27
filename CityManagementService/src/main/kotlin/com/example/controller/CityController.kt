@@ -1,24 +1,23 @@
 package com.example.controller
 
-import com.example.com.example.service.CityManipulatorRemote
-import com.example.com.example.service.CityValidatorRemote
+import com.example.com.example.service.impl.CityManipulator
+import com.example.com.example.service.impl.CityValidator
+import com.example.entity.City
 import com.example.entity.CityListWrapper
+import com.example.entity.SeaLevelSumWrapper
+import jakarta.inject.Inject
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
-import com.example.com.example.service.impl.CityValidator
 import java.time.LocalDate
-import com.example.entity.City
-import com.example.entity.SeaLevelSumWrapper
-import jakarta.inject.Inject
 import java.util.concurrent.CopyOnWriteArrayList
 
 @Path("/cities")
 @Produces(MediaType.APPLICATION_XML)
 @Consumes(MediaType.APPLICATION_XML)
 open class CityResource @Inject constructor(
-    private val cityManipulatorRemote: CityManipulatorRemote,
-    private val cityValidatorRemote: CityValidatorRemote
+    private val cityManipulator: CityManipulator,
+    private val cityValidator: CityValidator
 ) {
 
     companion object {
@@ -39,16 +38,16 @@ open class CityResource @Inject constructor(
 
             if (filter != null) {
                 try {
-                    result = cityManipulatorRemote.applyFilter(result, filter)
+                    result = cityManipulator.applyFilter(result, filter)
                 } catch (e: BadRequestException) {
                     return Response.status(Response.Status.BAD_REQUEST).build()
                 }
             }
 
-            result = cityManipulatorRemote.applyPagination(result, page!!, effectiveSize)
+            result = cityManipulator.applyPagination(result, page!!, effectiveSize)
 
             if (sort != null) {
-                result = cityManipulatorRemote.applySort(result, sort)
+                result = cityManipulator.applySort(result, sort)
             }
 
             return Response.ok(CityListWrapper(result)).build()
@@ -62,7 +61,7 @@ open class CityResource @Inject constructor(
     @POST
     open fun addCity(city: City): Response {
         try {
-            val validationErrors = cityValidatorRemote.validateCity(city)
+            val validationErrors = cityValidator.validateCity(city)
             if (validationErrors.isNotEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST)
                     .entity("<error>${validationErrors.joinToString(", ")}</error>")
@@ -101,7 +100,7 @@ open class CityResource @Inject constructor(
     @Path("/{id}")
     open fun updateCity(@PathParam("id") id: Long, updatedCity: City): Response {
         try {
-            val validationErrors = cityValidatorRemote.validateCity(updatedCity)
+            val validationErrors = cityValidator.validateCity(updatedCity)
             if (validationErrors.isNotEmpty()) {
                 return Response.status(Response.Status.BAD_REQUEST)
                     .entity("<error>${validationErrors.joinToString(", ")}</error>")
@@ -193,5 +192,11 @@ open class CityResource @Inject constructor(
                 .entity("<error>Server error: ${e.message}</error>")
                 .build()
         }
+    }
+
+    @GET
+    @Path("/health")
+    open fun healthCheck(): Response {
+        return Response.ok("Application is running").build()
     }
 }

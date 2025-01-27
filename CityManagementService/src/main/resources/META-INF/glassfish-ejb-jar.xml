@@ -1,0 +1,20 @@
+<glassfish-ejb-jar>
+    <enterprise-beans>
+        <ejb>
+            <ejb-name>CityManipulator</ejb-name>
+            <pool>
+                <steady-pool-size>5</steady-pool-size>
+                <resize-quantity>5</resize-quantity>
+                <max-pool-size>50</max-pool-size>
+            </pool>
+        </ejb>
+        <ejb>
+            <ejb-name>CityValidator</ejb-name>
+            <pool>
+                <steady-pool-size>5</steady-pool-size>
+                <resize-quantity>5</resize-quantity>
+                <max-pool-size>50</max-pool-size>
+            </pool>
+        </ejb>
+    </enterprise-beans>
+</glassfish-ejb-jar>
