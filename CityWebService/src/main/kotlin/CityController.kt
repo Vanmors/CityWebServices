@@ -1,12 +1,8 @@
-package com.example.controller
-
-import com.example.com.example.dao.CityDao
-import com.example.com.example.service.CityManipulatorServiceRemote
 import com.example.entity.City
 import com.example.entity.CityListWrapper
 import com.example.entity.SeaLevelSumWrapper
-import com.example.service.CityManipulatorServiceImpl
 import com.example.service.CityValidator
+import jakarta.inject.Inject
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
@@ -16,11 +12,8 @@ import jakarta.ws.rs.core.Response
 @Consumes(MediaType.APPLICATION_XML)
 open class CityResource {
 
-    //    @Inject
-    private val cityManipulatorServiceRemote: CityManipulatorServiceRemote = CityManipulatorServiceImpl()
-
-
-    private val cityDao = CityDao()
+    @Inject
+    lateinit var cityManipulationService: CityManipulationService
 
     @GET
     open fun getCities(
@@ -30,7 +23,7 @@ open class CityResource {
         @QueryParam("size") size: Int?
     ): Response {
         return try {
-            Response.ok(CityListWrapper(cityManipulatorServiceRemote.getCities(sort, filter, page, size)))
+            Response.ok(CityListWrapper(cityManipulationService.getCities(sort, filter, page, size)))
                 .build()
         } catch (e: BadRequestException) {
             Response.status(Response.Status.BAD_REQUEST).build()
@@ -51,7 +44,7 @@ open class CityResource {
                     .build()
             }
 
-            val newCity = cityManipulatorServiceRemote.addCity(city)
+            val newCity = cityManipulationService.addCity(city)
             return Response.status(Response.Status.CREATED).entity(newCity).build()
         } catch (e: Exception) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -65,7 +58,7 @@ open class CityResource {
     @Path("/{id}")
     open fun getCity(@PathParam("id") id: Long): Response {
         return try {
-            val city = cityManipulatorServiceRemote.getCity(id)
+            val city = cityManipulationService.getCity(id)
             if (city != null) {
                 Response.ok(city).build()
             } else {
@@ -89,9 +82,9 @@ open class CityResource {
                     .build()
             }
 
-            val city = cityManipulatorServiceRemote.getCity(id)
+            val city = cityManipulationService.getCity(id)
             return if (city != null) {
-                cityManipulatorServiceRemote.updateCity(updatedCity)
+                cityManipulationService.updateCity(updatedCity)
                 Response.ok(city).build()
             } else {
                 Response.status(Response.Status.NOT_FOUND).build()
@@ -108,9 +101,9 @@ open class CityResource {
     @Path("/{id}")
     open fun deleteCity(@PathParam("id") id: Long): Response {
         return try {
-            val city = cityManipulatorServiceRemote.getCity(id)
+            val city = cityManipulationService.getCity(id)
             if (city != null) {
-                cityManipulatorServiceRemote.deleteCity(id)
+                cityManipulationService.deleteCity(id)
                 Response.noContent().build()
             } else {
                 Response.status(Response.Status.NOT_FOUND).build()
@@ -126,7 +119,7 @@ open class CityResource {
     @Path("/by-sea-level/{level}")
     open fun deleteBySeaLevel(@PathParam("level") level: Float): Response {
         return try {
-            cityManipulatorServiceRemote.deleteBySeaLevel(level)
+            cityManipulationService.deleteBySeaLevel(level)
             Response.status(Response.Status.NO_CONTENT).build()
         } catch (e: Exception) {
             Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -139,7 +132,7 @@ open class CityResource {
     @Path("/sea-level-sum")
     open fun getSeaLevelSum(): Response {
         return try {
-            val sum = cityManipulatorServiceRemote.getSeaLevelSum()
+            val sum = cityManipulationService.getSeaLevelSum()
             Response.ok(SeaLevelSumWrapper(sum)).build()
         } catch (e: Exception) {
             Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -152,7 +145,7 @@ open class CityResource {
     @Path("/name-starts-with/{prefix}")
     open fun getByNamePrefix(@PathParam("prefix") prefix: String): Response {
         return try {
-            val filteredCities = cityManipulatorServiceRemote.getByNamePrefix(prefix)
+            val filteredCities = cityManipulationService.getByNamePrefix(prefix)
             Response.ok(CityListWrapper(filteredCities)).build()
         } catch (e: Exception) {
             Response.status(Response.Status.INTERNAL_SERVER_ERROR)
