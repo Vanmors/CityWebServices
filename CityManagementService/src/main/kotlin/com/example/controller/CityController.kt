@@ -1,5 +1,6 @@
 package com.example.controller
 
+import com.example.com.example.dao.CityDao
 import com.example.entity.CityListWrapper
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.MediaType
@@ -18,6 +19,9 @@ open class CityResource {
     companion object {
         val cities = CopyOnWriteArrayList<City>()
     }
+
+    private val cityDao = CityDao()
+
     @GET
     open fun getCities(
         @QueryParam("sort") sort: String?,
@@ -28,7 +32,8 @@ open class CityResource {
         try {
             val effectiveSize = size ?: cities.size
 
-            var result = cities.toList()
+//            var result = cities.toList()
+            var result = cityDao.findAll()
 
             if (filter != null) {
                 try {
@@ -65,6 +70,7 @@ open class CityResource {
             city.id = (cities.size + 1).toLong()
             city.creationDate = LocalDate.now().toString()
             cities.add(city)
+            cityDao.save(city)
             return Response.status(Response.Status.CREATED).entity(city).build()
         } catch (e: Exception) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
