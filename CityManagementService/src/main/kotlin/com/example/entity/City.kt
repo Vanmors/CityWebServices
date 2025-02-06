@@ -15,6 +15,11 @@ data class City(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @field:XmlElement
     var id: Long? = null,
+
+    @Version
+    @field:XmlElement
+    var version: Int = 0,
+
     @field:XmlElement
     var name: String? = null,
     @Embedded
@@ -37,6 +42,8 @@ data class City(
     @field:XmlElement
     var standardOfLiving: StandardOfLiving? = null,
     @field:XmlElement
+    @ManyToOne
+    @JoinColumn(name = "governor_id")
     var governor: Human? = null
 )
 

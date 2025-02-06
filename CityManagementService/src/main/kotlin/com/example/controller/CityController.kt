@@ -16,9 +16,12 @@ import java.util.concurrent.CopyOnWriteArrayList
 @Produces(MediaType.APPLICATION_XML)
 @Consumes(MediaType.APPLICATION_XML)
 open class CityResource {
+    /*
     companion object {
         val cities = CopyOnWriteArrayList<City>()
     }
+
+     */
 
     private val cityDao = CityDao()
 
@@ -30,7 +33,8 @@ open class CityResource {
         @QueryParam("size") size: Int?
     ): Response {
         try {
-            val effectiveSize = size ?: cities.size
+            //val effectiveSize = size ?: cities.size
+            val effectiveSize = cityDao.findAll().size
 
 //            var result = cities.toList()
             var result = cityDao.findAll()
@@ -67,9 +71,9 @@ open class CityResource {
                     .build()
             }
 
-            city.id = (cities.size + 1).toLong()
+            //city.id = (cities.size + 1).toLong()
             city.creationDate = LocalDate.now().toString()
-            cities.add(city)
+            //cities.add(city)
             cityDao.save(city)
             return Response.status(Response.Status.CREATED).entity(city).build()
         } catch (e: Exception) {
@@ -79,11 +83,13 @@ open class CityResource {
         }
     }
 
+
     @GET
     @Path("/{id}")
     open fun getCity(@PathParam("id") id: Long): Response {
         return try {
-            val city = cities.find { it.id == id }
+            //val city = cities.find { it.id == id }
+            val city = cityDao.findById(id)
             if (city != null) {
                 Response.ok(city).build()
             } else {
@@ -107,8 +113,10 @@ open class CityResource {
                     .build()
             }
 
-            val city = cities.find { it.id == id }
+            //val city = cities.find { it.id == id }
+            val city = cityDao.findById(id)
             return if (city != null) {
+                /*
                 city.apply {
                     name = updatedCity.name
                     coordinates = updatedCity.coordinates
@@ -120,6 +128,8 @@ open class CityResource {
                     standardOfLiving = updatedCity.standardOfLiving
                     governor = updatedCity.governor
                 }
+                */
+                cityDao.update(updatedCity)
                 Response.ok(city).build()
             } else {
                 Response.status(Response.Status.NOT_FOUND).build()
@@ -131,13 +141,16 @@ open class CityResource {
         }
     }
 
+
     @DELETE
     @Path("/{id}")
     open fun deleteCity(@PathParam("id") id: Long): Response {
         return try {
-            val city = cities.find { it.id == id }
+            //val city = cities.find { it.id == id }
+            val city = cityDao.findById(id)
             if (city != null) {
-                cities.remove(city)
+                //cities.remove(city)
+                cityDao.delete(id)
                 Response.noContent().build()
             } else {
                 Response.status(Response.Status.NOT_FOUND).build()
@@ -154,7 +167,8 @@ open class CityResource {
     @Path("/by-sea-level/{level}")
     open fun deleteBySeaLevel(@PathParam("level") level: Float): Response {
         return try {
-            cities.removeIf { it.metersAboveSeaLevel == level }
+            //cities.removeIf { it.metersAboveSeaLevel == level }
+            cityDao.deleteBySeaLevel(level)
             Response.status(Response.Status.NO_CONTENT).build()
         } catch (e: Exception) {
             Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -169,9 +183,12 @@ open class CityResource {
     open fun getSeaLevelSum(): Response {
         return try {
             var sum = 0.0
+            /*
             for (city in cities) {
                 sum += city.metersAboveSeaLevel.toDouble()
             }
+             */
+            sum = cityDao.getSeaLevelSum()
             Response.ok(SeaLevelSumWrapper(sum)).build()
         } catch (e: Exception) {
             Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -185,7 +202,8 @@ open class CityResource {
     @Path("/name-starts-with/{prefix}")
     open fun getByNamePrefix(@PathParam("prefix") prefix: String): Response {
         return try {
-            val filteredCities = cities.filter { it.name?.startsWith(prefix) == true }
+            //val filteredCities = cities.filter { it.name?.startsWith(prefix) == true }
+            val filteredCities = cityDao.findByNamePrefix(prefix)
             Response.ok(CityListWrapper(filteredCities)).build()
         } catch (e: Exception) {
             Response.status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -193,4 +211,5 @@ open class CityResource {
                 .build()
         }
     }
+
 }

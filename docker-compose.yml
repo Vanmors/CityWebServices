@@ -1,25 +1,28 @@
 version: '3.8'
 
 services:
-  city-management-service:
-    build: ./CityManagementService
-    container_name: city_management_service1
-    ports:
-      - "8080:8080" # Перенаправление HTTP
-      - "8181:8181" # Перенаправление HTTPS
-      - "4848:4848" # Административная консоль
-    networks:
-      - net
+#  city-management-service:
+#    build: ./CityManagementService
+#    container_name: city_management_service1
+#    ports:
+#      - "8080:8080" # Перенаправление HTTP
+#      - "8181:8181" # Перенаправление HTTPS
+#      - "4848:4848" # Административная консоль
+#    networks:
+#      - net
 
-  route-calculation-service:
-    build: ./RouteCalculationService
-    container_name: route_calculation_service1
-    ports:
-      - "8081:8080" # Перенаправление HTTP
-      - "8182:8181" # Перенаправление HTTPS
-      - "4849:4848" # Административная консоль
-    networks:
-      - net
+
+#  route-calculation-service:
+#    build: ./RouteCalculationService
+#    container_name: route_calculation_service1
+#    ports:
+#      - "8081:8080" # Перенаправление HTTP
+#      - "8182:8181" # Перенаправление HTTPS
+#      - "4849:4848" # Административная консоль
+#    networks:
+#      - net
+
+
   postgres:
     image: postgres
     container_name: main-db
@@ -28,9 +31,9 @@ services:
       POSTGRES_USER: "admin"
       POSTGRES_PASSWORD: "admin"
     command: postgres -p 5432
-    volumes:
+#    volumes:
 #      - ./tickets/deploy/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - pg_data:/var/lib/postgresql
+#      - pg_data:/var/lib/postgresql
     networks:
       - net
     ports:
