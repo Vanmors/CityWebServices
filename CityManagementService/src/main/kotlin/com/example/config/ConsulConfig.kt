@@ -22,7 +22,7 @@ open class ConsulConfig {
     open fun init() {
         client = Consul.builder()
             //.withHostAndPort(HostAndPort.fromParts("consul", 8500))
-            .withHostAndPort(HostAndPort.fromParts("localhost", 8500))
+            .withHostAndPort(HostAndPort.fromParts("consul", 8500))
             .build()
         agentClient = client.agentClient()
 
@@ -30,8 +30,8 @@ open class ConsulConfig {
             .id(serviceId)
             .name(serviceId)
             .port(8080)
-            //.address("city-management-service")
-            .address("localhost")
+            .address("city-management-service")
+            //.address("localhost")
             .tags(listOf("city-management-service"))
             .meta(mapOf("version" to "1.0"))
             .build()

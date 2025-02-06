@@ -18,7 +18,7 @@ import kotlin.math.pow
 @Path("/route/calculate")
 @Produces(MediaType.APPLICATION_XML)
 open class RouteController {
-    private val citiesApiUrl = "https://city-management-service:8181/city-management-1.0-SNAPSHOT/api/cities"
+    private val citiesApiUrl = "http://city-management-service:8080/city-management-1.0-SNAPSHOT/api/cities"
     @GET
     @Path("/between-oldest-and-newest")
     open fun calculateDistanceBetweenOldestAndNewest(): Response {
