@@ -1,28 +1,6 @@
 version: '3.8'
 
 services:
-#  city-management-service:
-#    build: ./CityManagementService
-#    container_name: city_management_service1
-#    ports:
-#      - "8080:8080" # Перенаправление HTTP
-#      - "8181:8181" # Перенаправление HTTPS
-#      - "4848:4848" # Административная консоль
-#    networks:
-#      - net
-
-
-#  route-calculation-service:
-#    build: ./RouteCalculationService
-#    container_name: route_calculation_service1
-#    ports:
-#      - "8081:8080" # Перенаправление HTTP
-#      - "8182:8181" # Перенаправление HTTPS
-#      - "4849:4848" # Административная консоль
-#    networks:
-#      - net
-
-
   postgres:
     image: postgres
     container_name: main-db
@@ -44,6 +22,41 @@ services:
       retries: 5
       start_period: 30s
       timeout: 10s
+
+
+  consul:
+    image: consul:1.15.4
+    container_name: consul
+    networks:
+      - net
+    ports:
+      - "8500:8500"
+
+
+  city-management-service:
+    build: ./CityManagementService
+    container_name: city_management_service
+    ports:
+      - "8080:8080" # Перенаправление HTTP
+      - "8181:8181" # Перенаправление HTTPS
+      - "4848:4848" # Административная консоль
+    depends_on:
+      - consul
+    networks:
+      - net
+
+  route-calculation-service:
+    build: ./RouteCalculationService
+    container_name: route_calculation_service
+    ports:
+      - "8081:8080" # Перенаправление HTTP
+      - "8182:8181" # Перенаправление HTTPS
+      - "4849:4848" # Административная консоль
+    depends_on:
+      - consul
+    networks:
+      - net  
+
 
 networks:
   net:
