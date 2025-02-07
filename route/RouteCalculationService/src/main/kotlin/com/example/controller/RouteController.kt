@@ -1,24 +1,28 @@
 package com.example.controller
 
-import com.example.entity.City
-import com.example.entity.CityListWrapper
-import com.example.entity.Coordinates
+import City
+import CityListWrapper
+import Coordinates
+import com.example.service.RouteService
+import jakarta.inject.Inject
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.client.ClientBuilder
-import kotlin.math.sqrt
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import kotlin.math.pow
 
 @Path("/route/calculate")
 @Produces(MediaType.APPLICATION_XML)
 open class RouteController {
     private val citiesApiUrl = "https://city-management-service:8181/city-management-1.0-SNAPSHOT/api/cities"
+
+    @Inject
+    private lateinit var routeService: RouteService
+
     @GET
     @Path("/between-oldest-and-newest")
     open fun calculateDistanceBetweenOldestAndNewest(): Response {
@@ -40,7 +44,7 @@ open class RouteController {
                     .entity("<error>Cannot calculate distance: insufficient city data</error>").build()
             }
 
-            val distance = calculateDistanceByCoordinates(oldestCity.coordinates!!, newestCity.coordinates!!)
+            val distance = routeService.calculateDistanceBetweenOldestAndNewest(oldestCity.coordinates!!, newestCity.coordinates!!)
 
             return Response.ok("<distance>$distance</distance>").build()
 
@@ -70,7 +74,7 @@ open class RouteController {
                     .entity("<error>Cannot calculate distance: insufficient city data</error>").build()
             }
 
-            val distance = calculateDistanceByCoordinates(oldestCity.coordinates!!, Coordinates(.0, 0))
+            val distance = routeService.calculateDistanceBetweenOldestAndNewest(oldestCity.coordinates!!, Coordinates(.0, 0))
 
             return Response.ok("<distance>$distance</distance>").build()
 
@@ -92,7 +96,7 @@ open class RouteController {
             return Pair(
                 Response.status(citiesResponse.status)
                     .entity(citiesResponse).build(), null
-                    //.entity("<error>Failed to fetch cities</error>").build(), null
+                //.entity("<error>Failed to fetch cities</error>").build(), null
             )
         }
 
@@ -107,12 +111,6 @@ open class RouteController {
         client.close()
         val mutableCities = cities.cities.toMutableList()
         return Pair(null, mutableCities)
-    }
-
-    private fun calculateDistanceByCoordinates(coord1: Coordinates, coord2: Coordinates): Double {
-        val deltaX = coord1.x!! - coord2.x!!
-        val deltaY = (coord1.y!! - coord2.y!!).toDouble()
-        return sqrt(deltaX.pow(2) + deltaY.pow(2))
     }
 
     fun findOldestAndNewestCities(cities: List<City>): Pair<City?, City?> {
