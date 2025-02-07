@@ -33,29 +33,29 @@ services:
       - "8500:8500"
 
 
-  city-management-service:
-    build: ./CityManagementService
-    container_name: city_management_service
-    ports:
-      - "8080:8080" # Перенаправление HTTP
-      - "8181:8181" # Перенаправление HTTPS
-      - "4848:4848" # Административная консоль
-    depends_on:
-      - consul
-    networks:
-      - net
-
-  route-calculation-service:
-    build: ./RouteCalculationService
-    container_name: route_calculation_service
-    ports:
-      - "8081:8080" # Перенаправление HTTP
-      - "8182:8181" # Перенаправление HTTPS
-      - "4849:4848" # Административная консоль
-    depends_on:
-      - consul
-    networks:
-      - net  
+#  city-management-service:
+#    build: ./CityManagementService
+#    container_name: city_management_service
+#    ports:
+#      - "8080:8080" # Перенаправление HTTP
+#      - "8181:8181" # Перенаправление HTTPS
+#      - "4848:4848" # Административная консоль
+#    depends_on:
+#      - consul
+#    networks:
+#      - net
+#
+#  route-calculation-service:
+#    build: ./RouteCalculationService
+#    container_name: route_calculation_service
+#    ports:
+#      - "8081:8080" # Перенаправление HTTP
+#      - "8182:8181" # Перенаправление HTTPS
+#      - "4849:4848" # Административная консоль
+#    depends_on:
+#      - consul
+#    networks:
+#      - net
 
 
 networks:
