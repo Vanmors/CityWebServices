@@ -34,7 +34,8 @@ services:
 
 
   city-management-service:
-    build: ./CityManagementService
+    #build: ./CityManagementService
+    build: ./city
     container_name: city-management-service
     ports:
       - "8081:8080" # Перенаправление HTTP
