@@ -1,3 +1,4 @@
+/*
 import com.google.common.net.HostAndPort
 import com.orbitz.consul.AgentClient
 import com.orbitz.consul.Consul
@@ -43,3 +44,5 @@ open class ConsulConfig {
         agentClient.deregister(serviceId)
     }
 }
+
+ */

@@ -3,11 +3,12 @@ package com.example.service
 import Coordinates
 import RouteServiceRemote
 import jakarta.enterprise.context.ApplicationScoped
+import jakarta.inject.Inject
 import javax.naming.InitialContext
 import javax.naming.NamingException
 
 @ApplicationScoped
-open class RouteService {
+open class RouteService @Inject constructor() {
     open val routeServiceRemote =
         getFromEJBPool("ejb:/CityWebService-1.0-SNAPSHOT/RouteServiceImpl!RouteServiceRemote")
     // TODO (проверить путь!!)

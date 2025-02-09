@@ -5,6 +5,7 @@ import CityListWrapper
 import Coordinates
 import com.example.service.RouteService
 import jakarta.inject.Inject
+import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.Produces
@@ -17,14 +18,23 @@ import java.time.format.DateTimeFormatter
 
 @Path("/route/calculate")
 @Produces(MediaType.APPLICATION_XML)
+@Consumes(MediaType.APPLICATION_XML)
 open class RouteController {
-    private val citiesApiUrl = "https://city-management-service:8181/city-management-1.0-SNAPSHOT/api/cities"
+    //private val citiesApiUrl = "https://city-management-service:8181/city-management-1.0-SNAPSHOT/api/cities"
+//    open val citiesApiUrl = "http://localhost:8081/CityWebService-1.0-SNAPSHOT/api/cities"
+    open val citiesApiUrl = "http://localhost:8081/city-management-1.0-SNAPSHOT/api/cities"
 
     @Inject
     private lateinit var routeService: RouteService
 
+//    @Inject
+//    fun setRouteService(routeService: RouteService) {
+//        this.routeService = routeService
+//    }
+
     @GET
     @Path("/between-oldest-and-newest")
+    @Produces(MediaType.APPLICATION_XML)
     open fun calculateDistanceBetweenOldestAndNewest(): Response {
         try {
             val response = queryToCitiesApi()
@@ -57,6 +67,7 @@ open class RouteController {
 
     @GET
     @Path("/to-oldest")
+    @Produces(MediaType.APPLICATION_XML)
     open fun calculateDistanceToOldest(): Response {
 
         try {
@@ -85,7 +96,7 @@ open class RouteController {
         }
     }
 
-    private fun queryToCitiesApi(): Pair<Response?, List<City>?> {
+    open fun queryToCitiesApi(): Pair<Response?, List<City>?> {
         val client = ClientBuilder.newClient()
 
         val citiesResponse = client.target(citiesApiUrl)
@@ -113,7 +124,7 @@ open class RouteController {
         return Pair(null, mutableCities)
     }
 
-    fun findOldestAndNewestCities(cities: List<City>): Pair<City?, City?> {
+    open fun findOldestAndNewestCities(cities: List<City>): Pair<City?, City?> {
         // Форматтеры для разбора дат с и без времени
         val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")

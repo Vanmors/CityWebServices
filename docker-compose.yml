@@ -3,12 +3,12 @@ version: '3.8'
 services:
   postgres:
     image: postgres
-    container_name: main-db
+    container_name: postgres
     environment:
       POSTGRES_DB: "postgres"
       POSTGRES_USER: "admin"
       POSTGRES_PASSWORD: "admin"
-    command: postgres -p 5432
+    #command: postgres -p 5432
 #    volumes:
 #      - ./tickets/deploy/init.sql:/docker-entrypoint-initdb.d/init.sql
 #      - pg_data:/var/lib/postgresql
@@ -16,38 +16,38 @@ services:
       - net
     ports:
       - "5432:5432"
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
-      interval: 10s
-      retries: 5
-      start_period: 30s
-      timeout: 10s
+#    healthcheck:
+#      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+#      interval: 10s
+#      retries: 5
+#      start_period: 30s
+#      timeout: 10s
 
 
-  consul:
-    image: consul:1.15.4
-    container_name: consul
-    networks:
-      - net
-    ports:
-      - "8500:8500"
-
-
-#  city-management-service:
-#    build: ./CityManagementService
-#    container_name: city_management_service
-#    ports:
-#      - "8080:8080" # Перенаправление HTTP
-#      - "8181:8181" # Перенаправление HTTPS
-#      - "4848:4848" # Административная консоль
-#    depends_on:
-#      - consul
+#  consul:
+#    image: consul:1.15.4
+#    container_name: consul
 #    networks:
 #      - net
+#    ports:
+#      - "8500:8500"
+
+
+  city-management-service:
+    build: ./CityManagementService
+    container_name: city-management-service
+    ports:
+      - "8081:8080" # Перенаправление HTTP
+      - "8181:8181" # Перенаправление HTTPS
+      - "4848:4848" # Административная консоль
+#    depends_on:
+#      - consul
+    networks:
+      - net
 #
 #  route-calculation-service:
 #    build: ./RouteCalculationService
-#    container_name: route_calculation_service
+#    container_name: route-calculation-service
 #    ports:
 #      - "8081:8080" # Перенаправление HTTP
 #      - "8182:8181" # Перенаправление HTTPS
