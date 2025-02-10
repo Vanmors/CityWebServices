@@ -49,17 +49,18 @@ services:
     networks:
       - net
 #
-#  route-calculation-service:
-#    build: ./RouteCalculationService
-#    container_name: route-calculation-service
-#    ports:
-#      - "8081:8080" # Перенаправление HTTP
-#      - "8182:8181" # Перенаправление HTTPS
-#      - "4849:4848" # Административная консоль
+
+  route-calculation-service:
+    build: ./route
+    container_name: route-calculation-service
+    ports:
+      - "8081:8080" # Перенаправление HTTP
+      - "8182:8181" # Перенаправление HTTPS
+      - "4849:4848" # Административная консоль
 #    depends_on:
 #      - consul
-#    networks:
-#      - net
+    networks:
+      - net
 
 
 networks:

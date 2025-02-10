@@ -22,7 +22,8 @@ import java.time.format.DateTimeFormatter
 open class RouteController {
     //private val citiesApiUrl = "https://city-management-service:8181/city-management-1.0-SNAPSHOT/api/cities"
 //    open val citiesApiUrl = "http://localhost:8081/CityWebService-1.0-SNAPSHOT/api/cities"
-    open val citiesApiUrl = "http://localhost:8081/city-management-1.0-SNAPSHOT/api/cities"
+    //open val citiesApiUrl = "http://localhost:8081/city-management-1.0-SNAPSHOT/api/cities"
+    open val citiesApiUrl = "http://city-management-service:8080/CityWebService-1.0-SNAPSHOT/api/cities"
 
     @Inject
     private lateinit var routeService: RouteService

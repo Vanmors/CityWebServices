@@ -18,6 +18,7 @@ RUN ln -fs /usr/share/zoneinfo/Europe/Moscow /etc/localtime && \
     apt-get update && apt-get install -y \
     postgresql \
     postgresql-client \
+    postgresql-contrib \
     openjdk-11-jdk \
     bash \
     curl \
@@ -26,11 +27,21 @@ RUN ln -fs /usr/share/zoneinfo/Europe/Moscow /etc/localtime && \
     && rm -rf /var/lib/apt/lists/*
 
 
-#RUN curl -L https://github.com/payara/Payara/archive/refs/tags/payara-server-6.2025.1.tar.gz -o payara.tar.gz \
-#    && mkdir -p /opt/payara \
-#    && tar -xzf payara.tar.gz -C /opt/payara \
-#    && rm -f payara.tar.gz \
-#    && ls -R /opt/payara
+
+
+
+
+
+# Устанавливаем Consul
+COPY deploy_sources/consul_1.14.4_linux_amd64.zip /tmp/consul.zip
+# Устанавливаем Consul
+RUN unzip /tmp/consul.zip -d /usr/local/bin/ \
+    && rm -f /tmp/consul.zip \
+    && chmod +x /usr/local/bin/consul
+
+
+
+
 
 
 COPY deploy_sources/payara6 /opt/payara
