@@ -261,7 +261,7 @@
 </section>
 
 <script>
-    const apiUrlCities = 'https://localhost:8181/city-management-1.0-SNAPSHOT/api/cities';
+    const apiUrlCities = 'http://localhost:8080/CityWebService-1.0-SNAPSHOT/api/cities';
 
     // Обработчик для GET-запроса (получение городов)
     document.getElementById('fetch-button').addEventListener('click', async () => {
@@ -278,12 +278,13 @@
         if (size) params.append('size', size);
         if (filter) params.append('filter', filter);
 
-        const url = `http://localhost:8080/city-management-1.0-SNAPSHOT/api/cities${params.toString() ? '?' + params.toString() : ''}`;
+        const url = `${apiUrlCities}${params.toString() ? '?' + params.toString() : ''}`;
 
         try {
             // Fetch data
             const response = await fetch(url, {
                 method: 'GET',
+                //mode: 'no-cors',
                 headers: {
                     'Content-Type': 'application/xml',
                     'Accept': 'application/xml',
@@ -601,7 +602,7 @@
             });
     }
 
-    const apiUrlRoutes = "https://localhost:8182/route-calculation-1.0-SNAPSHOT/api/route/calculate"
+    const apiUrlRoutes = "http://localhost:9000/route-calculation-1.0-SNAPSHOT/api/route/calculate"
     // Рассчитать длину маршрута до самого старого города
     function calculateToOldest() {
         fetchAndProcessXml(
