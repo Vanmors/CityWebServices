@@ -1,7 +1,7 @@
 package com.example.service
 
-import Coordinates
-import RouteServiceRemote
+import com.example.entity.Coordinates
+import com.example.RouteServiceRemote
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import javax.naming.InitialContext
@@ -9,7 +9,11 @@ import javax.naming.NamingException
 
 @ApplicationScoped
 open class RouteService @Inject constructor() {
-    open val routeServiceRemote = getFromEJBPool("RouteServiceRemote")
+    //todo МБ ЕЩЕ РАЗ ДОБАВИТЬ com.example?
+    open val routeServiceRemote = getFromEJBPool("com.example.RouteServiceRemote")
+    //open val routeServiceRemote = getFromEJBPool("com.example.RouteServiceRemote")
+
+    //"ejb:/CityWebService-1.0-SNAPSHOT/CityManipulatorServiceImpl!com.example.com.example.service.CityManipulatorServiceRemote"
 
     //getFromEJBPool("ejb:/CityWebService-1.0-SNAPSHOT/CityManipulatorServiceImpl!com.example.com.example.service.CityManipulatorServiceRemote")
     //    getFromEJBPool("ejb:/CityWebService-1.0-SNAPSHOT/RouteServiceImpl!RouteServiceRemote")

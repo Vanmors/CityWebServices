@@ -1,3 +1,6 @@
+package com.example
+
+import com.example.entity.Coordinates
 import jakarta.ejb.Remote
 
 @Remote

@@ -1,8 +1,8 @@
 package com.example.controller
 
-import City
-import CityListWrapper
-import Coordinates
+import com.example.entity.City
+import com.example.entity.CityListWrapper
+import com.example.entity.Coordinates
 import com.example.service.RouteService
 import jakarta.inject.Inject
 import jakarta.ws.rs.Consumes
