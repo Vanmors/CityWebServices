@@ -8,7 +8,9 @@ import javax.naming.NamingException
 @ApplicationScoped
 open class CityManipulationService @Inject constructor() {
 
-    open val cityManipulatorServiceRemote = getFromEJBPool("ejb:/CityWebService-1.0-SNAPSHOT/CityManipulatorServiceImpl!com.example.com.example.service.CityManipulatorServiceRemote")
+    open val cityManipulatorServiceRemote =
+        getFromEJBPool("com.example.com.example.service.CityManipulatorServiceRemote")
+        //getFromEJBPool("ejb:/CityWebService-1.0-SNAPSHOT/CityManipulatorServiceImpl!com.example.com.example.service.CityManipulatorServiceRemote")
         //getFromEJBPool("ejb:/city-management/CityManipulatorServiceImpl!com.example.com.example.service.CityManipulatorServiceRemote")
     open fun getCities(sort: String?, filter: String?, page: Int?, size: Int?): ArrayList<City> {
         return cityManipulatorServiceRemote.getCities(sort, filter, page, size)

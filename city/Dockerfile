@@ -18,6 +18,7 @@ RUN ln -fs /usr/share/zoneinfo/Europe/Moscow /etc/localtime && \
     apt-get update && apt-get install -y \
     postgresql \
     postgresql-client \
+    openjdk-11-jdk \
     bash \
     curl \
     unzip \
@@ -25,22 +26,24 @@ RUN ln -fs /usr/share/zoneinfo/Europe/Moscow /etc/localtime && \
     && rm -rf /var/lib/apt/lists/*
 
 
-RUN curl -L https://github.com/payara/Payara/archive/refs/tags/payara-server-6.2025.1.tar.gz -o payara.tar.gz \
-    && mkdir -p /opt/payara \
-    && tar -xzf payara.tar.gz -C /opt/payara \
-    && rm -f payara.tar.gz \
-    && ls -R /opt/payara
+#RUN curl -L https://github.com/payara/Payara/archive/refs/tags/payara-server-6.2025.1.tar.gz -o payara.tar.gz \
+#    && mkdir -p /opt/payara \
+#    && tar -xzf payara.tar.gz -C /opt/payara \
+#    && rm -f payara.tar.gz \
+#    && ls -R /opt/payara
 
 
+COPY deploy_sources/payara6 /opt/payara
 
-RUN ls -R /opt/payara
 
 # Устанавливаем права на выполнение
-RUN chmod +x /opt/payara/payara5/bin/asadmin
+RUN chmod +x /opt/payara/bin/asadmin
+
+RUN mkdir -p /opt/payara/deployments
 
 # Копируем .war и .jar файлы
-COPY CityManagementService/target/city-management-1.0-SNAPSHOT.jar /opt/payara/payara5/deployments/
-COPY CityWebService/target/CityWebService-1.0-SNAPSHOT.war /opt/payara/payara5/deployments/
+COPY CityManagementService/target/city-management-1.0-SNAPSHOT.jar /opt/payara/deployments/
+COPY CityWebService/target/CityWebService-1.0-SNAPSHOT.war /opt/payara/deployments/
 
 # Копируем скрипт запуска
 COPY start_services.sh /start_services.sh
@@ -48,6 +51,8 @@ RUN chmod +x /start_services.sh
 
 # Экспонируем порты
 EXPOSE 5432 8080 4848
+
+#CMD tail -f /dev/null
 
 # Выполняем скрипт старта
 CMD ["/start_services.sh"]

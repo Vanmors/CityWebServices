@@ -4,6 +4,7 @@ services:
 #  postgres:
 #    image: postgres
 #    container_name: postgres
+#    hostname: postgres
 #    environment:
 #      POSTGRES_DB: "postgres"
 #      POSTGRES_USER: "admin"
@@ -37,10 +38,12 @@ services:
     #build: ./CityManagementService
     build: ./city
     container_name: city-management-service
+    hostname: city-management-service
     ports:
-      - "8081:8080" # Перенаправление HTTP
+      - "8080:8080" # Перенаправление HTTP
       - "8181:8181" # Перенаправление HTTPS
       - "4848:4848" # Административная консоль
+      - "8500:8500" # consul
 #    depends_on:
 #      - consul
     networks:
