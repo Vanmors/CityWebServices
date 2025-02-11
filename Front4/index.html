@@ -542,12 +542,30 @@
             .then(data => {
                 const parser = new DOMParser();
                 const xmlDoc = parser.parseFromString(data, 'application/xml');
+                console.log("xmlDoc ", xmlDoc)
                 const cities = xmlDoc.getElementsByTagName('city');
+                console.log("cities ", cities)
                 const tableBody = document.querySelector('#cities-by-prefix-table tbody');
                 tableBody.innerHTML = ''; // Очистка таблицы
 
                 for (let city of cities) {
+                    console.log("one city from cycle: ", city)
                     const row = document.createElement('tr');
+                    console.log("row: ", row)
+
+                    console.log(`id: ${city.getElementsByTagName('id')[0].textContent}`)
+                    console.log(`name: ${city.getElementsByTagName('name')[0].textContent}`)
+                    console.log(`population: ${city.getElementsByTagName('population')[0].textContent}`)
+                    console.log(`area: ${city.getElementsByTagName('area')[0].textContent}`)
+                    console.log(`metersAboveSeaLevel: ${city.getElementsByTagName('metersAboveSeaLevel')[0].textContent}`)
+                    console.log(`capital: ${city.getElementsByTagName('capital')[0].textContent}`)
+                    console.log(`climate: ${city.getElementsByTagName('climate')[0].textContent}`)
+                    console.log(`standardOfLiving: ${city.getElementsByTagName('standardOfLiving')[0].textContent}`)
+                    console.log(`creationDate: ${city.getElementsByTagName('creationDate')[0].textContent}`)
+                    console.log(`coordinates: X: ${city.getElementsByTagName('coordinates')[0].getElementsByTagName('x')[0].textContent}, Y: ${city.getElementsByTagName('coordinates')[0].getElementsByTagName('y')[0].textContent}`)
+                    //console.log(`governor b-day: ${city.getElementsByTagName('governor')[0].getElementsByTagName('birthday')[0].textContent}`)
+
+
                     row.innerHTML = `
                             <td>${city.getElementsByTagName('id')[0].textContent}</td>
                             <td>${city.getElementsByTagName('name')[0].textContent}</td>
@@ -559,12 +577,17 @@
                             <td>${city.getElementsByTagName('standardOfLiving')[0].textContent}</td>
                             <td>${city.getElementsByTagName('creationDate')[0].textContent}</td>
                             <td>X: ${city.getElementsByTagName('coordinates')[0].getElementsByTagName('x')[0].textContent}, Y: ${city.getElementsByTagName('coordinates')[0].getElementsByTagName('y')[0].textContent}</td>
-                            <td>${city.getElementsByTagName('governor')[0].getElementsByTagName('birthday')[0].textContent}</td>
+                            <td>${''}</td>
                         `;
+                    //<td>${city.getElementsByTagName('governor')[0].getElementsByTagName('birthday')[0].textContent}</td>
+                    console.log("row inner html: ", row.innerHTML)
                     tableBody.appendChild(row);
                 }
             })
-            .catch(error => alert(`Error fetching cities: ${error.message}`));
+            .catch(error => {
+                console.log(error.message)
+                alert(`Error fetching cities: ${error.message}`)
+            });
     });
 
 
