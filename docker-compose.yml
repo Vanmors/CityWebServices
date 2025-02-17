@@ -1,62 +1,52 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: postgres
-    container_name: main-db
-    environment:
-      POSTGRES_DB: "postgres"
-      POSTGRES_USER: "admin"
-      POSTGRES_PASSWORD: "admin"
-    command: postgres -p 5432
-#    volumes:
-#      - ./tickets/deploy/init.sql:/docker-entrypoint-initdb.d/init.sql
-#      - pg_data:/var/lib/postgresql
-    networks:
-      - net
-    ports:
-      - "5432:5432"
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
-      interval: 10s
-      retries: 5
-      start_period: 30s
-      timeout: 10s
-
-
-  consul:
-    image: consul:1.15.4
-    container_name: consul
-    networks:
-      - net
-    ports:
-      - "8500:8500"
-
-
   city-management-service:
-    build: ./CityManagementService
-    container_name: city_management_service
+    #build: ./CityManagementService
+    build: ./city
+    container_name: city-management-service
+    hostname: city-management-service
     ports:
       - "8080:8080" # Перенаправление HTTP
       - "8181:8181" # Перенаправление HTTPS
       - "4848:4848" # Административная консоль
-    depends_on:
-      - consul
+      - "8500:8500" # consul
     networks:
       - net
 
-  route-calculation-service:
-    build: ./RouteCalculationService
-    container_name: route_calculation_service
+  haproxy:
+    image: haproxy:latest
+    container_name: haproxy
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    depends_on:
+      - route-calculation-service1
+      - route-calculation-service2
+    networks:
+      - net
+
+  route-calculation-service1:
+    build: ./route
+    container_name: route-calculation-service1
     ports:
       - "8081:8080" # Перенаправление HTTP
       - "8182:8181" # Перенаправление HTTPS
       - "4849:4848" # Административная консоль
-    depends_on:
-      - consul
     networks:
-      - net  
+      - net
 
+
+  route-calculation-service2:
+    build: ./route
+    container_name: route_calculation_service2
+    ports:
+      - "8082:8080" # Перенаправление HTTP
+      - "8183:8181" # Перенаправление HTTPS
+      - "4850:4848" # Административная консоль
+    networks:
+      - net
 
 networks:
   net:
