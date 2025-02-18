@@ -9,8 +9,14 @@ import jakarta.xml.soap.SOAPFactory
 import jakarta.xml.ws.WebServiceException
 import jakarta.xml.ws.soap.SOAPFaultException
 
-@WebService(endpointInterface = "com.example.controller.RouteServiceSoap")
-class RouteSoapServiceImpl : RouteSoapService {
+@WebService(endpointInterface = "com.example.controller.RouteSoapService")
+open class RouteSoapServiceImpl : RouteSoapService {
+
+    init {
+        println("### RouteSoapServiceImpl загружен ###")
+    }
+
+    constructor()
 
     @Inject
     private lateinit var routeService: RouteService
@@ -124,7 +130,6 @@ class RouteSoapServiceImpl : RouteSoapService {
 
         return cityListWrapper.cities
     }
-
 
 
     private fun findOldestAndNewestCities(cities: List<City>): Pair<City?, City?> {

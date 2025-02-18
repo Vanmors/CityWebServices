@@ -4,7 +4,10 @@ import jakarta.jws.WebMethod
 import jakarta.jws.WebService
 
 
-@WebService(name = "RouteSoapService", targetNamespace = "http://com.example.controller/")
+@WebService(
+    name = "RouteSoapService",
+    serviceName = "RouteSoapService",
+    targetNamespace = "http://com.example.controller/")
 interface RouteSoapService {
 
     @WebMethod
