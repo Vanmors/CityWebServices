@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  #soap
+  route-calculation-service1:
+    build: ./route
+    container_name: route-calculation-service1
+    ports:
+      - "8080:8080" # Перенаправление HTTP
+      - "8181:8181" # Перенаправление HTTPS
+      - "4848:4848" # Административная консоль
+    networks:
+      net:
+        ipv4_address: 10.5.0.7
+
+  #rest-layer
+  route-calculation-service2:
+    build: ./route/RouteRestLayer
+    container_name: route_calculation_service2
+    ports:
+      - "8081:8080" # Перенаправление HTTP
+      - "8182:8181" # Перенаправление HTTPS
+      - "4859:4848" # Административная консоль
+    networks:
+      net:
+        ipv4_address: 10.5.0.8
+
+networks:
+  net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/20
+          gateway: 10.5.0.1

@@ -1,7 +1,11 @@
 package com.example
 
-import jakarta.ws.rs.ApplicationPath
+import com.example.controller.RouteSoapServiceImpl
 import jakarta.ws.rs.core.Application
+import jakarta.xml.ws.Endpoint
 
-@ApplicationPath("/api")
-open class JaxRsApplication : Application()
+open class JaxRsApplication {
+    init {
+        Endpoint.publish("http://localhost:8080/", RouteSoapServiceImpl())
+    }
+}

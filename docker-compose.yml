@@ -40,7 +40,7 @@ services:
 
   route-calculation-service2:
     build: ./route
-    container_name: route_calculation_service2
+    container_name: route-calculation-service2
     ports:
       - "8082:8080" # Перенаправление HTTP
       - "8183:8181" # Перенаправление HTTPS
@@ -48,5 +48,21 @@ services:
     networks:
       - net
 
+  route-rest-layer:
+    build: ./route/RouteRestLayer
+    container_name: route-rest-layer
+    ports:
+      - "8083:8080" # Перенаправление HTTP
+      - "8184:8181" # Перенаправление HTTPS
+      - "4851:4848" # Административная консоль
+    networks:
+      - net
+
+
 networks:
   net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.5.0.0/20
+          gateway: 10.5.0.1
