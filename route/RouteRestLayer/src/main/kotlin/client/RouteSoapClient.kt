@@ -15,7 +15,8 @@ import javax.xml.namespace.QName
 open class RouteSoapClient @Inject constructor() {
 
     //todo ИСПРАВИТЬ
-    private val wsdlUrl = "http://10.5.0.7:8080/route-calculation-1.0-SNAPSHOT/RouteSoapServiceImplService?wsdl"
+    //private val wsdlUrl = "http://10.5.0.7:8080/route-calculation-1.0-SNAPSHOT/RouteSoapServiceImplService?wsdl"
+    private val wsdlUrl = "http://haproxy:9000/route-calculation-1.0-SNAPSHOT/RouteSoapServiceImplService?wsdl"
     private val nsUri = "http://controller.example.com/"
     private val localPart = "RouteSoapServiceImplService"
 

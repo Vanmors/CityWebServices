@@ -54,7 +54,6 @@ open class RouteSoapServiceImpl : RouteSoapService {
         }
     }
 
-    /*
     private fun fetchCities(): List<City> {
         val client = jakarta.ws.rs.client.ClientBuilder.newClient()
         val response = client.target(citiesApiUrl)
@@ -75,55 +74,53 @@ open class RouteSoapServiceImpl : RouteSoapService {
         return cityListWrapper.cities
     }
 
-     */
-
-    private fun fetchCities(): List<City> {
-        val cityListWrapper = CityListWrapper(
-            cities = listOf(
-                City(
-                    id = 1,
-                    name = "New York",
-                    coordinates = Coordinates(40.7128, -74),
-                    creationDate = "1624-01-01",
-                    area = 783L,
-                    population = 8419600,
-                    metersAboveSeaLevel = 10.0f,
-                    capital = false,
-                    climate = Climate.HUMIDCONTINENTAL,
-                    standardOfLiving = StandardOfLiving.VERY_HIGH,
-                    governor = Human(birthday = "1970-05-15")
-                ),
-                City(
-                    id = 2,
-                    name = "Paris",
-                    coordinates = Coordinates(48.8566, 2),
-                    creationDate = "300-01-01",
-                    area = 105L,
-                    population = 2148000,
-                    metersAboveSeaLevel = 35.0f,
-                    capital = true,
-                    climate = Climate.OCEANIC,
-                    standardOfLiving = StandardOfLiving.ULTRA_HIGH,
-                    governor = Human(birthday = "1965-09-23")
-                ),
-                City(
-                    id = 3,
-                    name = "Tokyo",
-                    coordinates = Coordinates(35.6895, 139),
-                    creationDate = "1603-01-01",
-                    area = 2194L,
-                    population = 13929000,
-                    metersAboveSeaLevel = 40.0f,
-                    capital = true,
-                    climate = Climate.MONSOON,
-                    standardOfLiving = StandardOfLiving.ULTRA_HIGH,
-                    governor = Human(birthday = "1980-12-11")
-                )
-            )
-        )
-
-        return cityListWrapper.cities
-    }
+//    private fun fetchCities(): List<City> {
+//        val cityListWrapper = CityListWrapper(
+//            cities = listOf(
+//                City(
+//                    id = 1,
+//                    name = "New York",
+//                    coordinates = Coordinates(40.7128, -74),
+//                    creationDate = "1624-01-01",
+//                    area = 783L,
+//                    population = 8419600,
+//                    metersAboveSeaLevel = 10.0f,
+//                    capital = false,
+//                    climate = Climate.HUMIDCONTINENTAL,
+//                    standardOfLiving = StandardOfLiving.VERY_HIGH,
+//                    governor = Human(birthday = "1970-05-15")
+//                ),
+//                City(
+//                    id = 2,
+//                    name = "Paris",
+//                    coordinates = Coordinates(48.8566, 2),
+//                    creationDate = "300-01-01",
+//                    area = 105L,
+//                    population = 2148000,
+//                    metersAboveSeaLevel = 35.0f,
+//                    capital = true,
+//                    climate = Climate.OCEANIC,
+//                    standardOfLiving = StandardOfLiving.ULTRA_HIGH,
+//                    governor = Human(birthday = "1965-09-23")
+//                ),
+//                City(
+//                    id = 3,
+//                    name = "Tokyo",
+//                    coordinates = Coordinates(35.6895, 139),
+//                    creationDate = "1603-01-01",
+//                    area = 2194L,
+//                    population = 13929000,
+//                    metersAboveSeaLevel = 40.0f,
+//                    capital = true,
+//                    climate = Climate.MONSOON,
+//                    standardOfLiving = StandardOfLiving.ULTRA_HIGH,
+//                    governor = Human(birthday = "1980-12-11")
+//                )
+//            )
+//        )
+//
+//        return cityListWrapper.cities
+//    }
 
 
 
