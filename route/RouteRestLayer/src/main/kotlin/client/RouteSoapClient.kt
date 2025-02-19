@@ -1,6 +1,7 @@
 package com.example.client
 
 import com.example.ws.RouteSoapService
+import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import jakarta.xml.ws.Service
 import jakarta.xml.ws.WebServiceClient
@@ -10,12 +11,13 @@ import javax.xml.namespace.QName
 
 
 @WebServiceClient
+@ApplicationScoped
 open class RouteSoapClient @Inject constructor() {
 
     //todo ИСПРАВИТЬ
-    private val wsdlUrl = "http://10.5.0.7:8080/route-calculation-1.0-SNAPSHOT/RouteServiceSoapImpl?wsdl"
-    private val nsUri = "http://com.example.controller/"
-    private val localPart = "RouteServiceSoapImplService"
+    private val wsdlUrl = "http://10.5.0.7:8080/route-calculation-1.0-SNAPSHOT/RouteSoapServiceImplService?wsdl"
+    private val nsUri = "http://controller.example.com/"
+    private val localPart = "RouteSoapServiceImplService"
 
     open fun sendQueryOnCalculateDistanceBetweenOldestAndNewest(): Double {
         return getPort().calculateDistanceBetweenOldestAndNewest()

@@ -22,6 +22,7 @@ open class RouteService @Inject constructor() {
 
     open fun calculateDistanceBetweenOldestAndNewest(coord1: Coordinates, coord2: Coordinates): Double {
         return routeServiceRemote.calculateDistanceBetweenOldestAndNewest(coord1, coord2)
+        //return 1.1
     }
 
     @Throws(NamingException::class)
