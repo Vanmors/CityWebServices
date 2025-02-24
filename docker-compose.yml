@@ -5,14 +5,15 @@ services:
     #build: ./CityManagementService
     build: ./city
     container_name: city-management-service
+    networks:
+      net:
+        ipv4_address: 10.5.0.5
     hostname: city-management-service
     ports:
       - "8080:8080" # Перенаправление HTTP
       - "8181:8181" # Перенаправление HTTPS
       - "4848:4848" # Административная консоль
       - "8500:8500" # consul
-    networks:
-      - net
 
   haproxy:
     image: haproxy:latest
@@ -58,6 +59,17 @@ services:
     networks:
       - net
 
+  esb:
+    build: ./mule
+    container_name: esb
+    ports:
+      - "8091:8081"
+      - "8092:8083"
+    volumes:
+      - ./logs:/opt/mule/logs
+    networks:
+      net:
+        ipv4_address: 10.5.0.9
 
 networks:
   net:

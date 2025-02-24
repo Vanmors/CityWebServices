@@ -8,3 +8,5 @@ target/
 .idea
 .smarttomcat
 .DS_Store
+logs
+mule/mule-ee-distribution-standalone-4.9.1.zip
