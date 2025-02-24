@@ -15,7 +15,8 @@ open class RouteSoapServiceImpl : RouteSoapService {
     @Inject
     private lateinit var routeService: RouteService
 
-    private val citiesApiUrl = "http://city-management-service:8080/CityWebService-1.0-SNAPSHOT/api/cities"
+    //private val citiesApiUrl = "http://city-management-service:8080/CityWebService-1.0-SNAPSHOT/api/cities"
+    private val citiesApiUrl = "http://10.5.0.9:8081/api/cities"
 
     @WebMethod
     override fun calculateDistanceBetweenOldestAndNewest(): Double {
